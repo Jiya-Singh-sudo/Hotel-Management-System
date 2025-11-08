@@ -1,113 +1,114 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using HotelManagementSystem.Models;
 using HotelManagementSystem.Data;
+using HotelManagementSystem.Models;
 
 namespace HotelManagementSystem.Controllers
 {
-    public class RoomsController : Controller
+    public class CarsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public RoomsController(ApplicationDbContext context)
+        public CarsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Rooms
+        // GET: Cars
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Rooms.ToListAsync());
+            var cars = await _context.Cars.ToListAsync();
+            return View(cars);
         }
 
-        // GET: Rooms/Details/5
+        // GET: Cars/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
 
-            var room = await _context.Rooms.FirstOrDefaultAsync(m => m.RoomId == id);
-            if (room == null) return NotFound();
+            var car = await _context.Cars.FirstOrDefaultAsync(m => m.CarId == id);
+            if (car == null) return NotFound();
 
-            return View(room);
+            return View(car);
         }
 
-        // GET: Rooms/Create
+        // GET: Cars/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Rooms/Create
+        // POST: Cars/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Room room)
+        public async Task<IActionResult> Create(Car car)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(room);
+                _context.Add(car);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(room);
+            return View(car);
         }
 
-        // GET: Rooms/Edit/5
+        // GET: Cars/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
 
-            var room = await _context.Rooms.FindAsync(id);
-            if (room == null) return NotFound();
+            var car = await _context.Cars.FindAsync(id);
+            if (car == null) return NotFound();
 
-            return View(room);
+            return View(car);
         }
 
-        // POST: Rooms/Edit/5
+        // POST: Cars/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Room room)
+        public async Task<IActionResult> Edit(int id, Car car)
         {
-            if (id != room.RoomId) return NotFound();
+            if (id != car.CarId) return NotFound();
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(room);
+                    _context.Update(car);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!_context.Rooms.Any(e => e.RoomId == id))
+                    if (!_context.Cars.Any(e => e.CarId == id))
                         return NotFound();
                     else
                         throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(room);
+            return View(car);
         }
 
-        // GET: Rooms/Delete/5
+        // GET: Cars/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
 
-            var room = await _context.Rooms.FirstOrDefaultAsync(m => m.RoomId == id);
-            if (room == null) return NotFound();
+            var car = await _context.Cars.FirstOrDefaultAsync(m => m.CarId == id);
+            if (car == null) return NotFound();
 
-            return View(room);
+            return View(car);
         }
 
-        // POST: Rooms/Delete/5
+        // POST: Cars/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var room = await _context.Rooms.FindAsync(id);
-            if (room != null)
+            var car = await _context.Cars.FindAsync(id);
+            if (car != null)
             {
-                _context.Rooms.Remove(room);
+                _context.Cars.Remove(car);
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction(nameof(Index));

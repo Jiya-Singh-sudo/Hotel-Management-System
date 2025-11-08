@@ -1,0 +1,33 @@
+@model HotelManagementSystem.Models.Car
+
+@{
+    ViewData["Title"] = "Delete Car";
+}
+
+<h2>Delete Car</h2>
+
+<div class="alert alert-danger">
+    Are you sure you want to delete this car?
+</div>
+
+<div class="card p-3 shadow-sm">
+    <dl class="row">
+        <dt class="col-sm-3">Model</dt>
+        <dd class="col-sm-9">@Model.Model</dd>
+
+        <dt class="col-sm-3">Make</dt>
+        <dd class="col-sm-9">@Model.Make</dd>
+
+        <dt class="col-sm-3">Driver Id</dt>
+        <dd class="col-sm-9">@Model.DriverId</dd>
+
+        <dt class="col-sm-3">Driver</dt>
+        <dd class="col-sm-9">@Model.Driver</dd>
+    </dl>
+</div>
+
+<form asp-action="DeleteConfirmed">
+    <input type="hidden" asp-for="CarId" />
+    <button type="submit" class="btn btn-danger mt-3">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary mt-3">Cancel</a>
+</form>
