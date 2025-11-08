@@ -1,0 +1,65 @@
+<!-- Bookings/Edit.cshtml-->
+@model HotelManagementSystem.Models.Booking
+
+@{
+    ViewData["Title"] = "Edit Booking";
+}
+
+<h2 class="mb-3">Edit Booking</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="BookingId" />
+
+    <div class="form-group">
+        <label asp-for="CustomerId" class="control-label">Customer</label>
+        <select asp-for="CustomerId" class="form-control" asp-items="ViewBag.CustomerId">
+            <option value="">-- Select Customer --</option>
+        </select>
+        <span asp-validation-for="CustomerId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="RoomId" class="control-label">Room</label>
+        <select asp-for="RoomId" class="form-control" asp-items="ViewBag.RoomId">
+            <option value="">-- Select Room --</option>
+        </select>
+        <span asp-validation-for="RoomId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="DriverId" class="control-label">Driver</label>
+        <select asp-for="DriverId" class="form-control" asp-items="ViewBag.DriverId">
+            <option value="">-- Select Driver --</option>
+        </select>
+        <span asp-validation-for="DriverId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="NumberOfGuests"></label>
+        <input asp-for="NumberOfGuests" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CheckInDate"></label>
+        <input asp-for="CheckInDate" class="form-control" type="date" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CheckOutDate"></label>
+        <input asp-for="CheckOutDate" class="form-control" type="date" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="TotalAmount"></label>
+        <input asp-for="TotalAmount" class="form-control" />
+    </div>
+
+    <div class="mt-3">
+        <button type="submit" class="btn btn-primary">Update</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
