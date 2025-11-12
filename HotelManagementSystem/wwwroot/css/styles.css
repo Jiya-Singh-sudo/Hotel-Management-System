@@ -1,0 +1,419 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+@font-face {
+  font-family: 'Glyce';
+  src: url('fonts/Glyce-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'neue-light';
+  src: url('fonts/NeueHaasDisplayLight.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'neue-medium';
+  src: url('fonts/NeueHaasDisplayMediu.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+:root {
+  --bg-color: #F8F5F0;
+  --text-color: #3E3E3E;
+  --accent-color: #D4B899;
+  --accent-light: #E8D5BE;
+  --accent-dark: #8B6B52;
+  --border-color: #A8A6A1;
+  --card-bg: #FFFFFF;
+  --shadow-color: rgba(0, 0, 0, 0.08);
+}
+
+html, body {
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+}
+
+section {
+  scroll-snap-align: start;
+}
+
+.about,
+.rooms-preview,
+.amenities,
+.contact-preview {
+    height: 100vh;
+  /* scroll-snap-align: start; */
+  padding-top: 80px;
+  box-sizing: border-box;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: "Poppins", "Glyce", sans-serif;
+}
+
+a {
+  color: var(--accent-dark);
+  text-decoration: none;
+  transition: 0.2s ease;
+}
+
+a:hover {
+  color: var(--accent-color);
+}
+
+button {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  border: none;
+  border-radius: 1.2px;
+  padding: 10px 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: var(--accent-dark);
+}
+
+.card {
+  background: var(--card-bg);
+  box-shadow: 0 4px 8px var(--shadow-color);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 1.5rem;
+}
+
+.dark-logo {
+  color: var(--text-color) !important;
+  transition: color 0.4s ease;
+}
+
+.dark-button{
+    background-color: #EDE3D4;
+}
+
+.dark-button:hover{
+    background-color: var(--accent-dark);
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  background: var(--border-color);
+  margin: 1.5rem 0;
+}
+
+nav {
+  padding: 0.8rem 3rem;           /* slightly increased padding for balance */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;                 /* stays on top of image */
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  box-sizing: border-box;
+}
+
+.logo-text{
+    color: var(--bg-color);
+}
+
+.nav-links{
+    display: flex;
+    list-style-type: none;
+    gap: 2rem;
+}
+
+.nav-links a{
+    text-decoration: none;
+}
+
+
+.landing-text,
+.landing-sub {
+  margin: 0;
+  padding: 0;
+}
+
+.landing{
+    display: flex;
+    flex-direction: column;
+    background-image: url("images/landing.jpg");
+    background-size: cover;
+    height: 100vh;
+    width: 100%;
+    justify-content: center;      
+    align-items: center;         
+    text-align: center;
+}
+
+.landing-text{
+    display: flex;
+    font-family: Glyce;
+    font-size: 4rem;
+}
+
+.landing-text-1{
+        color: #fff;
+}
+
+.landing-sub{
+    font-family: neue-light;
+    font-size: 1.5rem;
+    color: var(--text-color);
+    margin-top: -4rem;
+}
+
+.about {
+  background-color: var(--bg-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0; /* remove all padding */
+  height: 100vh;
+  overflow: hidden;
+}
+
+.about-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.about-text {
+  flex: 1;
+  padding-left: 10%;
+  box-sizing: border-box;
+}
+
+.about-text h2{
+    font-family: Glyce;
+    font-size: 4rem;
+}
+
+.about-text p{
+    margin-top: -6%;
+    font-family: neue-light;
+}
+
+.about-image {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.about-image img {
+    opacity: 60%;
+  width: auto;
+  height: 100%;
+  object-fit: cover; /* ensures it fills height neatly */
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.gallery{
+    margin-top: 30%;
+    display: flex;
+    gap: 1rem; /* adds space between images */
+    flex-wrap: wrap; /* keeps layout neat on smaller screens */
+    justify-content: flex-start;
+}
+
+.gallery img {
+  height: 120px;
+  width: 140px;
+  object-fit: cover;
+  border-radius: 1.2px;
+  transition: transform 0.4s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+/* hover effect */
+.gallery img:hover {
+  transform: scale(1.08); 
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* optional subtle glow */
+}
+
+/* ROOMS SECTION */
+.rooms-preview {
+  background-color: #fff;
+  text-align: center;
+  padding: 5rem 10%;
+}
+
+.rooms-preview h2 {
+  font-family: 'Glyce';
+  font-size: 2.8rem;
+  color: var(--accent-dark);
+  margin-bottom: 2rem;
+}
+
+.room-cards {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.room-card {
+  background: var(--card-bg);
+  /* border-radius: 10px; */
+  /* box-shadow: 0 4px 10px rgba(0,0,0,0.08); */
+  width: 350px;
+  padding: 0.5rem;
+  text-align: left;
+  transition: transform 0.3s ease;
+}
+
+.room-card h3{
+    font-family: Glyce;
+}
+
+.room-card p{
+    font-family: neue-light;
+}
+
+.room-card:hover {
+  transform: translateY(-5px);
+}
+
+.room-card img {
+  width: 100%;
+  height: 40%;
+  object-fit: cover;
+  /* border-radius: 10px; */
+  margin-bottom: 1rem;
+}
+
+/* AMENITIES SECTION */
+.amenities {
+  background-color: var(--bg-color);
+  text-align: center;
+  padding: 6rem 8%;
+}
+
+.amenities h2 {
+  font-family: 'Glyce';
+  color: var(--accent-dark);
+  font-size: 2.8rem;
+  margin-bottom: 3rem;
+}
+
+.amenities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.amenity-card {
+  background: var(--card-bg);
+  /* border-radius: 12px; */
+  padding: 2rem 1.5rem;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.amenity-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+}
+
+.amenity-card h3 {
+  font-family: 'Glyce';
+  font-size: 1.2rem;
+  color: var(--accent-dark);
+  margin-bottom: 0.6rem;
+}
+
+.amenity-card p {
+  font-family: 'neue-light';
+  font-size: 0.95rem;
+  color: var(--text-color);
+  line-height: 1.5;
+}
+
+
+/* CONTACT SECTION */
+.contact-preview {
+  background: linear-gradient(
+    rgba(0, 0, 0, 0.55),
+    rgba(0, 0, 0, 0.55)
+  ),
+  url("images/contact-bg.png") center/cover no-repeat;
+  color: #fff;
+  text-align: center;
+  padding: 8rem 10% 3rem; /* more top padding, less bottom */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+.contact-content {
+  max-width: 700px;
+}
+
+.contact-preview h2 {
+  font-family: 'Glyce';
+  font-size: 2.8rem;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.contact-preview p {
+  font-family: 'neue-light';
+  font-size: 1.1rem;
+  line-height: 1.7;
+  margin-bottom: 2rem;
+  color: #f7f4ef;
+}
+
+.contact-btn {
+  background-color: #CDC4B5;
+  color: #fff;
+  border: none;
+  padding: 0.9rem 2.5rem;
+  font-family: 'neue-medium';
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.contact-btn:hover {
+  background-color: var(--accent-dark);
+  transform: translateY(-3px);
+}
+
+/* bottom plain info */
+.contact-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+  margin-top: auto;
+  font-family: 'neue-light';
+  font-size: 0.95rem;
+  color: #e8e6e3;
+}
+
+.contact-details p {
+  margin: 0;
+}
+
