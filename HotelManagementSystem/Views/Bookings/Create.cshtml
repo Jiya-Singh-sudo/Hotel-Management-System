@@ -1,0 +1,120 @@
+@model HotelManagementSystem.Models.Booking
+@{
+    ViewData["Title"] = "Book Your Stay";
+}
+
+<link rel="stylesheet" href="~/css/styles.css" />
+
+<div class="booking-container">
+    <div class="booking-image" id="bookingImage"></div>
+
+    <div class="booking-form">
+        <h2>Book Your Stay</h2>
+
+        <form asp-action="Create" enctype="multipart/form-data" id="bookingForm">
+            <div class="form-row">
+                <div>
+                    <label asp-for="FullName"></label>
+                    <input asp-for="FullName" class="form-control" required />
+                </div>
+                <div>
+                    <label asp-for="Phone"></label>
+                    <input asp-for="Phone" class="form-control" required />
+                </div>
+            </div>
+
+            <label asp-for="Email"></label>
+            <div class="otp-row">
+                <input asp-for="Email" type="email" id="emailInput" placeholder="Enter Email" required />
+                <button type="button" id="sendOtpBtn">Send OTP</button>
+                <input type="text" id="otpInput" placeholder="Enter OTP" disabled required />
+            </div>
+
+            <div class="form-row">
+                <div>
+                    <label asp-for="CheckInDate"></label>
+                    <input asp-for="CheckInDate" type="date" class="form-control" required />
+                </div>
+                <div>
+                    <label asp-for="CheckOutDate"></label>
+                    <input asp-for="CheckOutDate" type="date" class="form-control" required />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div>
+                    <label asp-for="Guests"></label>
+                    <select asp-for="Guests" required>
+                        <option value="">Select</option>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4+</option>
+                    </select>
+                </div>
+                <div>
+                    <label asp-for="RoomType"></label>
+                    <select asp-for="RoomType" id="roomType" required>
+                        <option value="">Select</option>
+                        <option value="Deluxe">Deluxe</option>
+                        <option value="Executive Suite">Executive Suite</option>
+                        <option value="Family Suite">Family Suite</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="id-row">
+                <div style="flex:1">
+                    <label asp-for="IdType"></label>
+                    <select asp-for="IdType" required>
+                        <option value="">Select</option>
+                        <option>Aadhaar</option>
+                        <option>Passport</option>
+                        <option>Driver’s License</option>
+                    </select>
+                </div>
+                <div style="flex:1">
+                    <label asp-for="IdProofFile"></label>
+                    <input asp-for="IdProofFile" type="file" accept="image/*,application/pdf" required />
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="confirmBookingBtn" disabled>Confirm Booking</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    const sendOtpBtn = document.getElementById("sendOtpBtn");
+    const otpInput = document.getElementById("otpInput");
+    const confirmBtn = document.getElementById("confirmBookingBtn");
+    const roomType = document.getElementById("roomType");
+    const bookingImage = document.getElementById("bookingImage");
+    let otpCode = null;
+
+    sendOtpBtn.addEventListener("click", () => {
+        otpCode = Math.floor(100000 + Math.random() * 900000);
+        alert(`📩 OTP sent to your email: ${otpCode}`); // Simulation
+        otpInput.disabled = false;
+        otpInput.focus();
+    });
+
+    otpInput.addEventListener("input", () => {
+        if (otpInput.value === String(otpCode)) {
+            otpInput.style.borderColor = "green";
+            confirmBtn.disabled = false;
+        } else {
+            otpInput.style.borderColor = "red";
+            confirmBtn.disabled = true;
+        }
+    });
+
+    roomType.addEventListener("change", (e) => {
+        const type = e.target.value;
+        if (type === "Deluxe") bookingImage.style.backgroundImage = "url('../images/IMG_6462.JPG')";
+        else if (type === "Executive Suite") bookingImage.style.backgroundImage = "url('../images/IMG_6460.JPG')";
+        else if (type === "Family Suite") bookingImage.style.backgroundImage = "url('../images/IMG_6453.PNG')";
+    });
+</script>
+}

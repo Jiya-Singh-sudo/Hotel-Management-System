@@ -1,0 +1,140 @@
+@{
+    Layout = null; // since it's a standalone login page without a shared layout
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login | Staywise</title>
+    <link rel="stylesheet" href="~/styles.css" />
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* left image */
+        .image-side {
+            flex: 1;
+            background: url("~/images/rew.png") center/cover no-repeat;
+        }
+
+        /* right form */
+        .form-side {
+            flex: 1;
+            background-color: #f8f5f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-box {
+            padding: 3rem 2.5rem;
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .login-box h2 {
+            font-family: 'Glyce';
+            font-size: 2rem;
+            margin-bottom: 3rem;
+            color: #3E3E3E;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        label {
+            font-size: 0.9rem;
+            font-family: 'neue-medium';
+            display: block;
+            margin-bottom: 0.3rem;
+            color: #3E3E3E;
+        }
+
+        input {
+            width: 90%;
+            padding: 0.75rem;
+            border: 1px solid #d4b899;
+            background-color: #fff;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .login-btn {
+            background-color: #D4B899;
+            color: #fff;
+            font-family: 'neue-medium';
+            border: none;
+            padding: 0.8rem 2rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            width: 95%;
+            margin-top: 1rem;
+        }
+
+        .login-btn:hover {
+            background-color: #8B6B52;
+            transform: translateY(-2px);
+        }
+
+        .alt-text {
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: #3E3E3E;
+        }
+
+        .alt-text a {
+            color: #8B6B52;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .alt-text a:hover {
+            color: #D4B899;
+        }
+    </style>
+</head>
+<body>
+    <div class="image-side"></div>
+
+    <div class="form-side">
+        <div class="login-box">
+            <h2>Welcome Back</h2>
+
+            @if (ViewBag.Error != null)
+            {
+                <p style="color:red; font-size:0.9rem;">@ViewBag.Error</p>
+            }
+
+            <form asp-controller="Account" asp-action="Login" method="post">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="Email" placeholder="Enter your email" required />
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="Password" placeholder="Enter your password" required />
+                </div>
+                <button class="login-btn" type="submit">Login</button>
+            </form>
+
+            <p class="alt-text">
+                Don’t have an account?
+                <a asp-controller="Account" asp-action="Register">Register</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

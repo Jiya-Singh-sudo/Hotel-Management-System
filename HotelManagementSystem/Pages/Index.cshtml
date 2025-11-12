@@ -1,10 +1,170 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Home - Staywise";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/styles.css" />
+</head>
+<body>
+    <nav>
+        <div class="logo">
+            <a asp-page="/Index" class="logo-text">staywise.</a>
+        </div>
+        <ul class="nav-links" id="navLinks">
+            <li><a asp-page="/Index">Home</a></li>
+            <li><a asp-page="/Rooms">Rooms</a></li>
+            <li><a asp-page="/Booking">Booking</a></li>
+            <li><a asp-page="/Contact">Contact</a></li>
+        </ul>
+        <button class="login-btn">
+            <a asp-page="/Login">Login</a>
+        </button>
+    </nav>
+
+    <main>
+        <section class="landing">
+            <div class="landing-text">
+                <p class="landing-text-1">Timeless sta</p>
+                <p class="landing-text-2">ys.Thoughtful comfort.</p>
+            </div>
+            <p class="landing-sub">Stay refined. Staywise.</p>
+        </section>
+
+        <section class="about" id="about">
+            <div class="about-container">
+                <div class="about-text">
+                    <h2>About Staywise</h2>
+                    <p>
+                        Experience refined hospitality designed for comfort and calm. 
+                        At Staywise, every space is crafted with warmth, elegance, and care — 
+                        blending modern design with timeless tranquility.
+                    </p>
+                    <button class="learn-more dark-button">Learn More</button>
+                    <div class="gallery">
+                        <img src="~/images/IMG_6448.PNG" alt="">
+                        <img src="~/images/IMG_6458.JPG" alt="">
+                        <img src="~/images/IMG_6461.JPG" alt="">
+                        <img src="~/images/IMG_6443.PNG" alt="">
+                    </div>
+                </div>
+                <div class="about-image">
+                    <img src="~/images/IMG_6457.JPG" alt="Staywise Interior">
+                </div>
+            </div>
+        </section>
+
+        <section class="rooms-preview" id="rooms">
+            <h2>Our Rooms</h2>
+            <div class="room-cards">
+                <div class="room-card">
+                    <img src="~/images/IMG_6462.JPG" alt="Deluxe Room">
+                    <h3>Deluxe Room</h3>
+                    <p>
+                        A cozy retreat blending modern elegance with warm comfort. 
+                        Perfect for solo travelers or couples seeking relaxation with style.
+                    </p>
+                    <button class="dark-button">View Details</button>
+                </div>
+
+                <div class="room-card">
+                    <img src="~/images/IMG_6460.JPG" alt="Executive Suite">
+                    <h3>Executive Suite</h3>
+                    <p>
+                        Spacious and sophisticated, offering a separate lounge area, 
+                        premium bedding, and elevated amenities for business or leisure stays.
+                    </p>
+                    <button class="dark-button">View Details</button>
+                </div>
+
+                <div class="room-card">
+                    <img src="~/images/IMG_6453.PNG" alt="Family Suite">
+                    <h3>Family Suite</h3>
+                    <p>
+                        Designed for togetherness — featuring generous space, multiple beds, 
+                        and homely touches to make every family stay effortless.
+                    </p>
+                    <button class="dark-button">View Details</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="amenities" id="amenities">
+            <h2>Amenities & Services</h2>
+            <div class="amenities-grid">
+                <div class="amenity-card">
+                    <h3>Complimentary Breakfast</h3>
+                    <p>A curated morning spread with continental and local favorites.</p>
+                </div>
+                <div class="amenity-card">
+                    <h3>High-Speed Wi-Fi</h3>
+                    <p>Seamless connectivity across rooms and lounges.</p>
+                </div>
+                <div class="amenity-card">
+                    <h3>Spa & Wellness</h3>
+                    <p>Relax, rejuvenate, and unwind with our luxury treatments.</p>
+                </div>
+                <div class="amenity-card">
+                    <h3>Infinity Pool</h3>
+                    <p>An elegant escape overlooking tranquil surroundings.</p>
+                </div>
+                <div class="amenity-card">
+                    <h3>24-Hour Concierge</h3>
+                    <p>Personal assistance anytime, for anything you need.</p>
+                </div>
+                <div class="amenity-card">
+                    <h3>Airport Transfers</h3>
+                    <p>Comfortable, timely pick-ups and drop-offs for a stress-free journey.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="contact-preview" id="contact">
+            <div class="contact-content">
+                <h2>Let’s Make Your Stay Exceptional</h2>
+                <p>
+                    Whether you’re planning a peaceful getaway or a grand celebration, 
+                    our team is here to help you every step of the way. Reach out — we’d love to hear from you.
+                </p>
+                <button class="contact-btn">
+                    <a asp-page="/Contact">Send Message</a>
+                </button>
+            </div>
+
+            <div class="contact-details">
+                <p>Staywise Hotel, 24 Grand Avenue, Lakeside</p>
+                <p>+91 98765 43210</p>
+                <p>reservations@staywise.com</p>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const logoText = document.querySelector('.logo-text');
+        const loginBtn = document.querySelector('.login-btn');
+
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+            const landing = document.querySelector('.landing');
+            const contact = document.querySelector('.contact-preview');
+
+            const landingBottom = landing.offsetTop + landing.offsetHeight;
+            const contactTop = contact.offsetTop;
+
+            if (scrollY > landingBottom - 100 && scrollY < contactTop - 100) {
+                logoText.classList.add('dark-logo');
+                loginBtn.classList.add('dark-button');
+            } else {
+                logoText.classList.remove('dark-logo');
+                loginBtn.classList.remove('dark-button');
+            }
+        }, { passive: true });
+    </script>
+</body>
+</html>

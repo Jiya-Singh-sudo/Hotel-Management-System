@@ -1,0 +1,107 @@
+@{
+    ViewData["Title"] = "Rooms | Staywise";
+}
+
+<main class="rooms-section">
+    <h1>Our Rooms</h1>
+    <div class="rooms-grid">
+        <!-- Deluxe Room -->
+        <div class="room-card">
+            <img src="~/images/IMG_6462.JPG" alt="Deluxe Room" />
+            <div class="room-card-content">
+                <h3>Deluxe Room</h3>
+                <p>A cozy blend of luxury and warmth with elegant interiors and calm tones.</p>
+                <button class="view-btn"
+                        data-room="Deluxe Room"
+                        data-img="~/images/IMG_6462.JPG"
+                        data-gallery="~/images/IMG_6462.JPG,~/images/room1.png,~/images/room11.png"
+                        data-desc="A cozy blend of luxury and warmth with elegant interiors and calm tones.">
+                    View
+                </button>
+            </div>
+        </div>
+
+        <!-- Executive Suite -->
+        <div class="room-card">
+            <img src="~/images/IMG_6460.JPG" alt="Executive Suite" />
+            <div class="room-card-content">
+                <h3>Executive Suite</h3>
+                <p>Spacious comfort, premium bedding, and modern design for refined stays.</p>
+                <button class="view-btn"
+                        data-room="Executive Suite"
+                        data-img="~/images/IMG_6460.JPG"
+                        data-gallery="~/images/IMG_6460.JPG,~/images/IMG_6461.JPG"
+                        data-desc="Spacious comfort, premium bedding, and modern design for refined stays.">
+                    View
+                </button>
+            </div>
+        </div>
+
+        <!-- Family Suite -->
+        <div class="room-card">
+            <img src="~/images/IMG_6453.PNG" alt="Family Suite" />
+            <div class="room-card-content">
+                <h3>Family Suite</h3>
+                <p>Perfect for families — generous space and homely touches for everyone to unwind.</p>
+                <button class="view-btn"
+                        data-room="Family Suite"
+                        data-img="~/images/room3.png"
+                        data-gallery="~/images/IMG_6453.PNG,~/images/room33.png"
+                        data-desc="Perfect for families — generous space and homely touches for everyone to unwind.">
+                    View
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Room Info Modal -->
+    <div class="modal" id="roomModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img id="modalMainImage" src="" alt="Room Image" />
+                <span class="close-btn">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3 id="modalRoomTitle"></h3>
+                <p id="modalRoomDesc"></p>
+                <div class="gallery" id="modalGallery"></div>
+            </div>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <script>
+        const modal = document.getElementById("roomModal");
+        const closeBtn = modal.querySelector(".close-btn");
+        const modalMainImage = document.getElementById("modalMainImage");
+        const modalRoomTitle = document.getElementById("modalRoomTitle");
+        const modalRoomDesc = document.getElementById("modalRoomDesc");
+        const modalGallery = document.getElementById("modalGallery");
+
+        const viewButtons = document.querySelectorAll(".view-btn");
+
+        viewButtons.forEach(btn => {
+            btn.addEventListener("click", () => {
+                modal.style.display = "flex";
+                modalMainImage.src = btn.dataset.img;
+                modalRoomTitle.textContent = btn.dataset.room;
+                modalRoomDesc.textContent = btn.dataset.desc;
+
+                modalGallery.innerHTML = "";
+                const images = btn.dataset.gallery.split(",");
+                images.forEach(imgSrc => {
+                    const img = document.createElement("img");
+                    img.src = imgSrc.trim();
+                    img.addEventListener("click", () => modalMainImage.src = imgSrc.trim());
+                    modalGallery.appendChild(img);
+                });
+            });
+        });
+
+        closeBtn.addEventListener("click", () => modal.style.display = "none");
+        window.addEventListener("click", e => {
+            if (e.target === modal) modal.style.display = "none";
+        });
+    </script>
+}
