@@ -1,5 +1,9 @@
+@page
+@model HotelManagementSystem.Pages.ContactModel
+
 @{
-    Layout = null; // standalone page
+    ViewData["Title"] = "Contact | Staywise";
+    // We remove the explicit Layout = null so it uses the default _Layout.cshtml
 }
 
 <!DOCTYPE html>
@@ -34,7 +38,7 @@
 
     .contact-hero {
       background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
-                  url("~/images/contact-bg.png") center/cover no-repeat;
+                  url("/images/contact-bg.png") center/cover no-repeat;
       height: 100vh;
       display: flex;
       justify-content: center;

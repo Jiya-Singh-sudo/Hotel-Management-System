@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using HotelManagementSystem.Data; // Adjust namespace if needed
+using HotelManagementSystem.Data; 
 using HotelManagementSystem.Models;
-
 
 namespace HotelManagementSystem.Controllers
 {
@@ -15,7 +14,14 @@ namespace HotelManagementSystem.Controllers
             _context = context;
         }
 
-        // GET: Customers
+        // NEW ACTION: GET: Customers/Dashboard
+        public async Task<IActionResult> Dashboard()
+        {
+            // FIX: Explicitly specify the view name to render 'Dashboard.cshtml'
+            return View("Dashboard"); 
+        }
+
+        // GET: Customers/Index
         public async Task<IActionResult> Index()
         {
             var customers = await _context.Customers.ToListAsync();

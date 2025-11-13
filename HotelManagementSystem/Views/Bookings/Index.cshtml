@@ -1,0 +1,119 @@
+@model IEnumerable<HotelManagementSystem.Models.Booking>
+
+@{
+    ViewData["Title"] = "All Bookings";
+    // Assuming this view uses the standard shared layout (_Layout.cshtml)
+}
+
+<style>
+    /* Styling to make the list look cohesive with your design */
+    .container {
+        padding: 4rem 2rem;
+        max-width: 1200px;
+        margin: auto;
+    }
+
+    .header-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+    
+    .header-section h2 {
+        font-family: 'Glyce', sans-serif;
+        color: #3E3E3E;
+        font-size: 2rem;
+    }
+
+    .btn-create {
+        background-color: #D4B899; /* --accent-color */
+        color: #fff;
+        padding: 0.75rem 1.5rem;
+        text-decoration: none;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
+    
+    .btn-create:hover {
+        background-color: #8B6B52; /* --accent-dark */
+    }
+
+    .table-container {
+        overflow-x: auto;
+    }
+
+    .bookings-table {
+        width: 100%;
+        border-collapse: collapse;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        background: #FFFFFF;
+    }
+
+    .bookings-table th {
+        background-color: #F8F5F0; /* --bg-color */
+        color: #3E3E3E;
+        text-align: left;
+        padding: 1rem;
+        border-bottom: 2px solid #E8D5BE;
+    }
+
+    .bookings-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #E8D5BE;
+        color: #3E3E3E;
+    }
+    
+    .bookings-table tr:hover {
+        background-color: #fcf9f5;
+    }
+    
+    .text-actions a {
+        color: #8B6B52;
+        text-decoration: none;
+        margin-right: 0.8rem;
+    }
+</style>
+
+<div class="container">
+    <div class="header-section">
+        <h2>Bookings Management</h2>
+        <a asp-action="Create" class="btn-create">Create New Booking</a>
+    </div>
+
+    <div class="table-container">
+        <table class="bookings-table">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Customer)</th>
+                    <th>@Html.DisplayNameFor(model => model.Room)</th>
+                    <th>@Html.DisplayNameFor(model => model.Driver)</th>
+                    <th>@Html.DisplayNameFor(model => model.CheckInDate)</th>
+                    <th>@Html.DisplayNameFor(model => model.CheckOutDate)</th>
+                    <th>@Html.DisplayNameFor(model => model.TotalAmount)</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.Customer.Name)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Room.Type)</td>
+                        <td>
+                            @(item.Driver != null ? Html.DisplayFor(modelItem => item.Driver.Name) : "N/A")
+                        </td>
+                        <td>@Html.DisplayFor(modelItem => item.CheckInDate)</td>
+                        <td>@Html.DisplayFor(modelItem => item.CheckOutDate)</td>
+                        <td>@Html.DisplayFor(modelItem => item.TotalAmount)</td>
+                        <td class="text-actions">
+                            <a asp-action="Edit" asp-route-id="@item.BookingId">Edit</a> |
+                            <a asp-action="Details" asp-route-id="@item.BookingId">Details</a> |
+                            <a asp-action="Delete" asp-route-id="@item.BookingId">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
