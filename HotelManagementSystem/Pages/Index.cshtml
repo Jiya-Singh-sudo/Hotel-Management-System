@@ -19,12 +19,12 @@
         </div>
         <ul class="nav-links" id="navLinks">
             <li><a asp-page="/Index">Home</a></li>
-            <li><a asp-page="/Rooms">Rooms</a></li>
-            <li><a asp-page="/Booking">Booking</a></li>
+            <li><a asp-controller="Rooms" asp-action="Index">Rooms</a></li>
+            <li><a asp-controller="Bookings" asp-action="Create">Booking</a></li>
             <li><a asp-page="/Contact">Contact</a></li>
         </ul>
         <button class="login-btn">
-            <a asp-page="/Login">Login</a>
+            <a asp-controller="Account" asp-action="Login">Login</a>
         </button>
     </nav>
 

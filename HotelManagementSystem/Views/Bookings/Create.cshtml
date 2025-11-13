@@ -1,120 +1,348 @@
-@model HotelManagementSystem.Models.Booking
+@using HotelManagementSystem.Models
+@model Booking
+
 @{
-    ViewData["Title"] = "Book Your Stay";
+    // This view uses a full HTML page layout, so we set Layout to null.
+    Layout = null; 
 }
 
-<link rel="stylesheet" href="~/css/styles.css" />
-
-<div class="booking-container">
-    <div class="booking-image" id="bookingImage"></div>
-
-    <div class="booking-form">
-        <h2>Book Your Stay</h2>
-
-        <form asp-action="Create" enctype="multipart/form-data" id="bookingForm">
-            <div class="form-row">
-                <div>
-                    <label asp-for="FullName"></label>
-                    <input asp-for="FullName" class="form-control" required />
-                </div>
-                <div>
-                    <label asp-for="Phone"></label>
-                    <input asp-for="Phone" class="form-control" required />
-                </div>
-            </div>
-
-            <label asp-for="Email"></label>
-            <div class="otp-row">
-                <input asp-for="Email" type="email" id="emailInput" placeholder="Enter Email" required />
-                <button type="button" id="sendOtpBtn">Send OTP</button>
-                <input type="text" id="otpInput" placeholder="Enter OTP" disabled required />
-            </div>
-
-            <div class="form-row">
-                <div>
-                    <label asp-for="CheckInDate"></label>
-                    <input asp-for="CheckInDate" type="date" class="form-control" required />
-                </div>
-                <div>
-                    <label asp-for="CheckOutDate"></label>
-                    <input asp-for="CheckOutDate" type="date" class="form-control" required />
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div>
-                    <label asp-for="Guests"></label>
-                    <select asp-for="Guests" required>
-                        <option value="">Select</option>
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4+</option>
-                    </select>
-                </div>
-                <div>
-                    <label asp-for="RoomType"></label>
-                    <select asp-for="RoomType" id="roomType" required>
-                        <option value="">Select</option>
-                        <option value="Deluxe">Deluxe</option>
-                        <option value="Executive Suite">Executive Suite</option>
-                        <option value="Family Suite">Family Suite</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="id-row">
-                <div style="flex:1">
-                    <label asp-for="IdType"></label>
-                    <select asp-for="IdType" required>
-                        <option value="">Select</option>
-                        <option>Aadhaar</option>
-                        <option>Passport</option>
-                        <option>Driver’s License</option>
-                    </select>
-                </div>
-                <div style="flex:1">
-                    <label asp-for="IdProofFile"></label>
-                    <input asp-for="IdProofFile" type="file" accept="image/*,application/pdf" required />
-                </div>
-            </div>
-
-            <button type="submit" class="submit-btn" id="confirmBookingBtn" disabled>Confirm Booking</button>
-        </form>
-    </div>
-</div>
-
-@section Scripts {
-<script>
-    const sendOtpBtn = document.getElementById("sendOtpBtn");
-    const otpInput = document.getElementById("otpInput");
-    const confirmBtn = document.getElementById("confirmBookingBtn");
-    const roomType = document.getElementById("roomType");
-    const bookingImage = document.getElementById("bookingImage");
-    let otpCode = null;
-
-    sendOtpBtn.addEventListener("click", () => {
-        otpCode = Math.floor(100000 + Math.random() * 900000);
-        alert(`📩 OTP sent to your email: ${otpCode}`); // Simulation
-        otpInput.disabled = false;
-        otpInput.focus();
-    });
-
-    otpInput.addEventListener("input", () => {
-        if (otpInput.value === String(otpCode)) {
-            otpInput.style.borderColor = "green";
-            confirmBtn.disabled = false;
-        } else {
-            otpInput.style.borderColor = "red";
-            confirmBtn.disabled = true;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Your Stay | Staywise</title>
+    
+    <link rel="stylesheet" href="/css/styles.css" />
+    
+    <style>
+        :root {
+            --bg: #f8f5f0;
+            --accent: #d4b899;
+            --accent-dark: #8b6b52;
+            --text: #3e3e3e;
+            --card: #ffffff;
+            --shadow: rgba(0, 0, 0, 0.08);
+            --bg-color: #F8F5F0;
+            --text-color: #3E3E3E;
+            --accent-color: #D4B899;
+            --accent-vlight: #CDC4B5;
+            --accent-light: #E8D5BE;
+            --border-color: #A8A6A1;
+            --card-bg: #FFFFFF;
+            --shadow-color: rgba(0, 0, 0, 0.08);
         }
-    });
 
-    roomType.addEventListener("change", (e) => {
-        const type = e.target.value;
-        if (type === "Deluxe") bookingImage.style.backgroundImage = "url('../images/IMG_6462.JPG')";
-        else if (type === "Executive Suite") bookingImage.style.backgroundImage = "url('../images/IMG_6460.JPG')";
-        else if (type === "Family Suite") bookingImage.style.backgroundImage = "url('../images/IMG_6453.PNG')";
-    });
-</script>
-}
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--bg-color);
+            font-family: "Poppins", sans-serif;
+            height: 100vh;
+            overflow: hidden; /* ✅ no scroll */
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- NAVBAR --- */
+        nav {
+            width: 100%;
+            padding: 1rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+        }
+
+        .logo-text {
+            font-family: "Glyce";
+            font-size: 1.6rem;
+            color: var(--accent-dark);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-dark);
+        }
+
+        .login-btn {
+            background: var(--accent-dark);
+            color: #fff;
+            border: none;
+            padding: 0.6rem 1.4rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .login-btn:hover {
+            background: var(--accent-color);
+            color: var(--text-color);
+        }
+
+        /* --- MAIN CONTAINER --- */
+        .booking-container {
+            display: flex;
+            flex: 1;
+            height: 100vh; 
+            overflow: hidden;
+            margin-top: 0;
+        }
+
+        .booking-image {
+            flex: 1.2;
+            /* 2. CORRECTED: Use absolute path for images from wwwroot */
+            background: url("/images/101.png") center/cover no-repeat;
+            filter: brightness(75%);
+        }
+
+        .booking-form {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 3rem 3rem;
+            background: #ffffffd8;
+        }
+
+        .booking-form h2 {
+            font-family: "Glyce";
+            font-size: 2rem;
+            color: var(--accent-dark);
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        form input,
+        form select {
+            width: 100%;
+            padding: 0.7rem;
+            border: 1px solid #ccc;
+            font-size: 0.95rem;
+            font-family: "Poppins";
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .form-row > div {
+            flex: 1;
+        }
+
+        .otp-row {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr 0.9fr;
+            gap: 0.5rem;
+            align-items: end;
+        }
+
+        .otp-row button {
+            background: var(--accent-dark);
+            color: #fff;
+            border: none;
+            padding: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .otp-row button:hover {
+            background: var(--accent-color);
+            color: var(--text-color);
+        }
+
+        .id-row {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .submit-btn {
+            background: var(--accent-dark);
+            color: #fff;
+            border: none;
+            padding: 0.9rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: 0.3s;
+            margin-top: 0.5rem;
+        }
+
+        .submit-btn:hover {
+            background: var(--accent-color);
+            color: var(--text-color);
+        }
+
+        @@media (max-width: 900px) {
+            .booking-container {
+                flex-direction: column;
+                height: auto;
+                overflow-y: auto;
+            }
+
+            body {
+                overflow-y: auto; /* enable scroll only for smaller screens */
+            }
+
+            .booking-image {
+                height: 40vh;
+            }
+
+            .booking-form {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">
+            <a asp-page="/Index" class="logo-text">staywise.</a>
+        </div>
+        <ul class="nav-links">
+            <li><a asp-page="/Index">Home</a></li>
+            <li><a asp-controller="Rooms" asp-action="Index">Rooms</a></li>
+            <li><a asp-controller="Bookings" asp-action="Create" style="color: var(--accent-dark)">Booking</a></li>
+            <li><a asp-page="/Contact">Contact</a></li>
+        </ul>
+        <button class="login-btn">
+            <a asp-page="/Login" style="text-decoration: none; color: #fff;">Login</a>
+        </button>
+    </nav>
+
+    <div class="booking-container">
+        <div class="booking-image"></div>
+
+        <div class="booking-form">
+            <h2>Book Your Stay</h2>
+
+            <form asp-controller="Bookings" asp-action="Create" method="post" id="bookingForm">
+                @Html.AntiForgeryToken()
+
+                <div class="form-row">
+                    <div>
+                        <label asp-for="CustomerId">Customer Name</label>
+                        <select asp-for="CustomerId" class="form-control" asp-items="ViewBag.CustomerId" required>
+                            <option value="">-- Select Customer --</option>
+                        </select>
+                        <span asp-validation-for="CustomerId" class="text-danger"></span>
+                    </div>
+                    <div>
+                        <label asp-for="DriverId">Driver</label>
+                        <select asp-for="DriverId" class="form-control" asp-items="ViewBag.DriverId">
+                             <option value="">-- No Driver Required --</option>
+                        </select>
+                        <span asp-validation-for="DriverId" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div>
+                        <label asp-for="CheckInDate">Check-In</label>
+                        <input type="date" asp-for="CheckInDate" required />
+                        <span asp-validation-for="CheckInDate" class="text-danger"></span>
+                    </div>
+                    <div>
+                        <label asp-for="CheckOutDate">Check-Out</label>
+                        <input type="date" asp-for="CheckOutDate" required />
+                        <span asp-validation-for="CheckOutDate" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div>
+                        <label asp-for="NumberOfGuests">Guests</label>
+                        <select asp-for="NumberOfGuests" required>
+                            <option value="">Select</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4+</option>
+                        </select>
+                        <span asp-validation-for="NumberOfGuests" class="text-danger"></span>
+                    </div>
+                    <div>
+                        <label asp-for="RoomId">Room Type</label>
+                        <select asp-for="RoomId" class="form-control" asp-items="ViewBag.RoomId" id="roomType" required>
+                            <option value="">Select</option>
+                        </select>
+                        <span asp-validation-for="RoomId" class="text-danger"></span>
+                    </div>
+                </div>
+                
+                <label asp-for="TotalAmount">Total Amount (Estimate)</label>
+                <input type="number" asp-for="TotalAmount" placeholder="Enter estimated total amount" required />
+                <span asp-validation-for="TotalAmount" class="text-danger"></span>
+                
+                <div class="id-row">
+                    <div style="flex:1">
+                        <label>ID Type (Client-side only)</label>
+                        <select>
+                            <option value="">Select</option>
+                            <option>Aadhaar</option>
+                            <option>Passport</option>
+                            <option>Driver’s License</option>
+                        </select>
+                    </div>
+                    <div style="flex:1">
+                        <label>Upload ID Proof (Client-side only)</label>
+                        <input type="file" accept="image/*,application/pdf" />
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="confirmBookingBtn">Confirm Booking</button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        const confirmBtn = document.getElementById("confirmBookingBtn");
+        const roomType = document.getElementById("roomType");
+        const bookingImage = document.querySelector(".booking-image");
+        
+        // This JS logic only works when the page is loaded (GET request)
+        roomType.addEventListener("change", (e) => {
+            // Note: The value here is the RoomId, not the descriptive text (deluxe, etc.)
+            // You may need to map these IDs to image URLs if you want this feature to work.
+            const typeId = e.target.value;
+            
+            // Assuming your RoomIds 1, 2, and 3 correspond to these types
+            if (typeId === "1") bookingImage.style.backgroundImage = "url('/images/IMG_6462.JPG')";
+            else if (typeId === "2") bookingImage.style.backgroundImage = "url('/images/IMG_6460.JPG')";
+            else if (typeId === "3") bookingImage.style.backgroundImage = "url('/images/IMG_6453.PNG')";
+            else bookingImage.style.backgroundImage = "url('/images/101.png')"; // default
+        });
+
+        // The OTP logic is removed as it doesn't align with the server-side MVC form submission flow.
+
+        // Add client-side validation scripts if not using a layout page
+        <partial name="_ValidationScriptsPartial" />
+    </script>
+</body>
+</html>

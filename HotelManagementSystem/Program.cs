@@ -29,9 +29,9 @@ app.UseRouting();
 app.UseAuthorization();
 app.UseStaticFiles();
 
-app.MapStaticAssets();
-app.MapRazorPages()
-   .WithStaticAssets();
+// Standard Razor Pages routing (replaces the non-standard calls)
+app.MapRazorPages(); 
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
