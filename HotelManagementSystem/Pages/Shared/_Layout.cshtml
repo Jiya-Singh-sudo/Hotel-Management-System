@@ -37,30 +37,33 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     
     <script>
-        const logoText = document.querySelector('.logo-text');
-        const loginBtn = document.querySelector('.login-btn');
+        (function() {
+            // Variables are now scoped locally to this function, preventing conflicts.
+            const logoText = document.querySelector('.logo-text'); 
+            const loginBtn = document.querySelector('.login-btn'); 
 
-        window.addEventListener('scroll', () => {
-            const scrollY = window.scrollY;
-            const landing = document.querySelector('.landing');
-            const contact = document.querySelector('.contact-preview');
+            window.addEventListener('scroll', () => {
+                const scrollY = window.scrollY;
+                const landing = document.querySelector('.landing');
+                const contact = document.querySelector('.contact-preview');
 
-            // Skip if the landing/contact sections aren't on the current page
-            if (!landing || !contact) return; 
+                // Skip if the landing/contact sections aren't on the current page
+                if (!landing || !contact) return; 
 
-            const landingBottom = landing.offsetTop + landing.offsetHeight;
-            const contactTop = contact.offsetTop;
+                const landingBottom = landing.offsetTop + landing.offsetHeight;
+                const contactTop = contact.offsetTop;
 
-            if (scrollY > landingBottom - 100 && scrollY < contactTop - 100) {
-                // sections 2–4
-                logoText.classList.add('dark-logo');
-                loginBtn.classList.add('dark-button');
-            } else {
-                // section 1 (landing) and 5 (contact)
-                logoText.classList.remove('dark-logo');
-                loginBtn.classList.remove('dark-button');
-            }
-        }, { passive: true });
+                if (scrollY > landingBottom - 100 && scrollY < contactTop - 100) {
+                    // sections 2–4
+                    logoText.classList.add('dark-logo');
+                    loginBtn.classList.add('dark-button');
+                } else {
+                    // section 1 (landing) and 5 (contact)
+                    logoText.classList.remove('dark-logo');
+                    loginBtn.classList.remove('dark-button');
+                }
+            }, { passive: true });
+        })();
     </script>
 
     @await RenderSectionAsync("Scripts", required: false)

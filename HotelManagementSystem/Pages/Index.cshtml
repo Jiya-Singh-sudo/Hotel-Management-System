@@ -145,26 +145,5 @@
         </section>
     </main>
 
-    <script>
-        const logoText = document.querySelector('.logo-text');
-        const loginBtn = document.querySelector('.login-btn');
-
-        window.addEventListener('scroll', () => {
-            const scrollY = window.scrollY;
-            const landing = document.querySelector('.landing');
-            const contact = document.querySelector('.contact-preview');
-
-            const landingBottom = landing.offsetTop + landing.offsetHeight;
-            const contactTop = contact.offsetTop;
-
-            if (scrollY > landingBottom - 100 && scrollY < contactTop - 100) {
-                logoText.classList.add('dark-logo');
-                loginBtn.classList.add('dark-button');
-            } else {
-                logoText.classList.remove('dark-logo');
-                loginBtn.classList.remove('dark-button');
-            }
-        }, { passive: true });
-    </script>
 </body>
 </html>
