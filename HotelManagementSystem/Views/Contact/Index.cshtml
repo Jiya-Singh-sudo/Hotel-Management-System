@@ -1,9 +1,7 @@
-@page
-@model HotelManagementSystem.Pages.ContactModel
+@model HotelManagementSystem.Models.ContactViewModel
 
 @{
-    ViewData["Title"] = "Contact | Staywise";
-    // We remove the explicit Layout = null so it uses the default _Layout.cshtml
+    Layout = null;
 }
 
 <!DOCTYPE html>
@@ -12,7 +10,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contact | Staywise</title>
-  <link rel="stylesheet" href="~/styles.css">
+  <link rel="stylesheet" href="/css/styles.css">
   <style>
     :root {
       --bg: #f8f5f0;
@@ -99,7 +97,8 @@
 </head>
 <body>
   <section class="contact-hero">
-    <form asp-controller="Contact" asp-action="Send" method="post" class="contact-form">
+    <form action="/Contact/Send" method="post" class="contact-form">
+      @* @Html.AntiForgeryToken() *@
       <h2>Contact Us</h2>
       <p>We’d love to hear from you. Reach out with questions or special requests.</p>
 

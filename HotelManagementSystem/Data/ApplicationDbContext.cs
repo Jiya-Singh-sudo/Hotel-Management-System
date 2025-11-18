@@ -15,6 +15,7 @@ namespace HotelManagementSystem.Data
         public DbSet<Room> Rooms { get; set; }
         public DbSet<Driver> Drivers { get; set; }
         public DbSet<Booking> Bookings { get; set; }
+        public DbSet<Contact> Contacts { get; set; }
         
         // Optional: Fluent API configuration for relationships (e.g., making DriverId nullable)
         protected override void OnModelCreating(ModelBuilder modelBuilder)
