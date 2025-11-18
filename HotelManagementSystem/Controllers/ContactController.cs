@@ -1,14 +1,22 @@
 using Microsoft.AspNetCore.Mvc;
 using HotelManagementSystem.Models;
+using HotelManagementSystem.Data;
 
 namespace HotelManagementSystem.Controllers
 {
-    [Route("Contact")]  // Add this
+    [Route("Contact")]
     public class ContactController : Controller
     {
+        private readonly ApplicationDbContext _context;
+
+        public ContactController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         [HttpGet]
-        [Route("")]  // Matches /Contact
-        [Route("Index")]  // Matches /Contact/Index
+        [Route("")]
+        [Route("Index")]
         public IActionResult Index()
         {
             Console.WriteLine("=== INDEX METHOD CALLED ===");
@@ -16,8 +24,8 @@ namespace HotelManagementSystem.Controllers
         }
 
         [HttpPost]
-        [Route("Send")]  // Explicitly matches /Contact/Send
-        public IActionResult Send(string Name, string Email, string Message)
+        [Route("Send")]
+        public async Task<IActionResult> Send(string Name, string Email, string Message)
         {
             Console.WriteLine("=== SEND METHOD CALLED ===");
             Console.WriteLine($"Name: {Name}");
@@ -30,16 +38,31 @@ namespace HotelManagementSystem.Controllers
                 return View("Index");
             }
 
-            ViewBag.Message = "Thank you! Your message has been received.";
-            return View("Index");
-        }
+            try
+            {
+                // Save to database
+                var contact = new Contact
+                {
+                    Name = Name,
+                    Email = Email,
+                    Message = Message,
+                    CreatedAt = DateTime.UtcNow
+                };
 
-        [HttpGet]
-        [Route("Test")]
-        public IActionResult Test()
-        {
-            Console.WriteLine("=== TEST METHOD CALLED ===");
-            return Content("Contact controller is working!");
+                _context.Contacts.Add(contact);
+                await _context.SaveChangesAsync();
+
+                Console.WriteLine($"✓ Contact saved to database with ID: {contact.Id}");
+                
+                ViewBag.Message = "Thank you! Your message has been received.";
+                return View("Index");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"✗ Error saving to database: {ex.Message}");
+                ViewBag.Error = "Failed to save your message. Please try again.";
+                return View("Index");
+            }
         }
     }
 }

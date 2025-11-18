@@ -85,12 +85,12 @@
         <table class="bookings-table">
             <thead>
                 <tr>
-                    <th>@Html.DisplayNameFor(model => model.Customer)</th>
-                    <th>@Html.DisplayNameFor(model => model.Room)</th>
-                    <th>@Html.DisplayNameFor(model => model.Driver)</th>
-                    <th>@Html.DisplayNameFor(model => model.CheckInDate)</th>
-                    <th>@Html.DisplayNameFor(model => model.CheckOutDate)</th>
-                    <th>@Html.DisplayNameFor(model => model.TotalAmount)</th>
+                    <th>Customer</th>
+                    <th>Room</th>
+                    <th>Driver</th>
+                    <th>Check In</th>
+                    <th>Check Out</th>
+                    <th>Total Amount</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -98,18 +98,16 @@
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td>@Html.DisplayFor(modelItem => item.Customer.Name)</td>
-                        <td>@Html.DisplayFor(modelItem => item.Room.Type)</td>
-                        <td>
-                            @(item.Driver != null ? Html.DisplayFor(modelItem => item.Driver.Name) : "N/A")
-                        </td>
+                        <td>@(item.Customer?.Name ?? "N/A")</td>
+                        <td>@(item.Room?.RoomType ?? item.Room?.RoomNumber ?? "N/A")</td>
+                        <td>@(item.Driver?.Name ?? "N/A")</td>
                         <td>@Html.DisplayFor(modelItem => item.CheckInDate)</td>
                         <td>@Html.DisplayFor(modelItem => item.CheckOutDate)</td>
                         <td>@Html.DisplayFor(modelItem => item.TotalAmount)</td>
                         <td class="text-actions">
-                            <a asp-action="Edit" asp-route-id="@item.BookingId">Edit</a> |
-                            <a asp-action="Details" asp-route-id="@item.BookingId">Details</a> |
-                            <a asp-action="Delete" asp-route-id="@item.BookingId">Delete</a>
+                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                            <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                         </td>
                     </tr>
                 }
