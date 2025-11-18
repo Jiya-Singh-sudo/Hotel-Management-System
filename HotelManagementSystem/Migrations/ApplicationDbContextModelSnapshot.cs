@@ -42,9 +42,6 @@ namespace HotelManagementSystem.Migrations
                     b.Property<int?>("DriverId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("NumberOfGuests")
-                        .HasColumnType("integer");
-
                     b.Property<int>("RoomId")
                         .HasColumnType("integer");
 
@@ -62,125 +59,83 @@ namespace HotelManagementSystem.Migrations
                     b.ToTable("Bookings");
                 });
 
-            modelBuilder.Entity("HotelManagementSystem.Models.Car", b =>
-                {
-                    b.Property<int>("CarId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CarId"));
-
-                    b.Property<int>("DriverId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Make")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<string>("Model")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<string>("RegistrationNumber")
-                        .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("character varying(15)");
-
-                    b.HasKey("CarId");
-
-                    b.HasIndex("DriverId");
-
-                    b.ToTable("Cars");
-                });
-
             modelBuilder.Entity("HotelManagementSystem.Models.Customer", b =>
                 {
-                    b.Property<int>("CustomerId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CustomerId"));
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("boolean");
 
-                    b.Property<string>("Password")
-                        .IsRequired()
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PasswordHash")
                         .HasColumnType("text");
 
                     b.Property<string>("Phone")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasKey("CustomerId");
+                    b.Property<string>("Username")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
 
                     b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("HotelManagementSystem.Models.Driver", b =>
                 {
-                    b.Property<int>("DriverId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DriverId"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("boolean");
 
                     b.Property<string>("LicenseNumber")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("Phone")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasKey("DriverId");
+                    b.Property<string>("Phone")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
 
                     b.ToTable("Drivers");
                 });
 
             modelBuilder.Entity("HotelManagementSystem.Models.Room", b =>
                 {
-                    b.Property<int>("RoomId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("RoomId"));
-
-                    b.Property<int>("Capacity")
-                        .HasColumnType("integer");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("boolean");
 
-                    b.Property<decimal>("PricePerNight")
+                    b.Property<decimal>("Price")
                         .HasColumnType("numeric");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                    b.Property<string>("RoomNumber")
+                        .HasColumnType("text");
 
-                    b.HasKey("RoomId");
+                    b.Property<string>("Type")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
 
                     b.ToTable("Rooms");
                 });
@@ -194,7 +149,7 @@ namespace HotelManagementSystem.Migrations
                         .IsRequired();
 
                     b.HasOne("HotelManagementSystem.Models.Driver", "Driver")
-                        .WithMany("Bookings")
+                        .WithMany()
                         .HasForeignKey("DriverId");
 
                     b.HasOne("HotelManagementSystem.Models.Room", "Room")
@@ -210,23 +165,7 @@ namespace HotelManagementSystem.Migrations
                     b.Navigation("Room");
                 });
 
-            modelBuilder.Entity("HotelManagementSystem.Models.Car", b =>
-                {
-                    b.HasOne("HotelManagementSystem.Models.Driver", "Driver")
-                        .WithMany()
-                        .HasForeignKey("DriverId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Driver");
-                });
-
             modelBuilder.Entity("HotelManagementSystem.Models.Customer", b =>
-                {
-                    b.Navigation("Bookings");
-                });
-
-            modelBuilder.Entity("HotelManagementSystem.Models.Driver", b =>
                 {
                     b.Navigation("Bookings");
                 });
