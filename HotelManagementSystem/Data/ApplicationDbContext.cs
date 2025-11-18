@@ -12,12 +12,10 @@ namespace HotelManagementSystem.Data
             
         }
         public DbSet<Contact> Contacts { get; set; }
-        
-        // Optional: Fluent API configuration for relationships (e.g., making DriverId nullable)
-       public DbSet<Customer> Customer { get; set; }
-        public DbSet<Room> Room { get; set; }
-        public DbSet<Driver> Driver { get; set; }
-        public DbSet<Booking> Booking { get; set; }
+        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Room> Rooms { get; set; }
+        public DbSet<Driver> Drivers { get; set; }
+        public DbSet<Booking> Bookings { get; set; }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

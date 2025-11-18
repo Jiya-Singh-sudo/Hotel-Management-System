@@ -5,6 +5,7 @@ using HotelManagementSystem.Data;
 using HotelManagementSystem.Models;
 using System.Security.Claims;
 
+
 namespace HotelManagementSystem.Controllers
 {
     [Route("Bookings")]
@@ -24,41 +25,84 @@ namespace HotelManagementSystem.Controllers
         {
             Console.WriteLine("=== CREATE BOOKING PAGE CALLED ===");
 
-            // Populate Customers dropdown
-            var customers = await _context.Customers
-                .Select(c => new SelectListItem
+            try
+            {
+                // Populate Customers dropdown
+                var customers = await _context.Customers
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.Id.ToString(),
+                        Text = c.Name + " (" + c.Email + ")"
+                    })
+                    .ToListAsync();
+                
+                Console.WriteLine($"Found {customers.Count} customers");
+                
+                // If no customers, create sample data
+                if (!customers.Any())
                 {
-                    Value = c.Id.ToString(),
-                    Text = c.Name + " (" + c.Email + ")"
-                })
-                .ToListAsync();
-            ViewBag.CustomerId = customers;
+                    await SeedSampleCustomers();
+                    customers = await _context.Customers
+                        .Select(c => new SelectListItem
+                        {
+                            Value = c.Id.ToString(),
+                            Text = c.Name + " (" + c.Email + ")"
+                        })
+                        .ToListAsync();
+                }
+                
+                ViewBag.CustomerId = customers;
 
-            // Populate Rooms dropdown (create sample rooms if none exist)
-            var rooms = await _context.Rooms.ToListAsync();
-            if (!rooms.Any())
-            {
-                // Add sample rooms if database is empty
-                await SeedSampleRooms();
-                rooms = await _context.Rooms.ToListAsync();
+                // Populate Rooms dropdown (create sample rooms if none exist)
+                var rooms = await _context.Rooms.ToListAsync();
+                Console.WriteLine($"Found {rooms.Count} rooms");
+                
+                if (!rooms.Any())
+                {
+                    // Add sample rooms if database is empty
+                    await SeedSampleRooms();
+                    rooms = await _context.Rooms.ToListAsync();
+                }
+
+                ViewBag.RoomId = rooms.Select(r => new SelectListItem
+                {
+                    Value = r.Id.ToString(),
+                    Text = r.RoomType + " - $" + r.PricePerNight + "/night (Room " + r.RoomNumber + ")"
+                }).ToList();
+
+                // Populate Drivers dropdown
+                var drivers = await _context.Drivers.ToListAsync();
+                Console.WriteLine($"Found {drivers.Count} drivers");
+                
+                if (!drivers.Any())
+                {
+                    await SeedSampleDrivers();
+                    drivers = await _context.Drivers.ToListAsync();
+                }
+
+                var driverList = new List<SelectListItem>
+                {
+                    new SelectListItem { Value = "", Text = "-- No Driver Required --" }
+                };
+                
+                driverList.AddRange(drivers.Select(d => new SelectListItem
+                {
+                    Value = d.Id.ToString(),
+                    Text = d.Name
+                }));
+
+                ViewBag.DriverId = driverList;
+
+                Console.WriteLine("=== DROPDOWNS POPULATED SUCCESSFULLY ===");
+                return View();
             }
-
-            ViewBag.RoomId = rooms.Select(r => new SelectListItem
+            catch (Exception ex)
             {
-                Value = r.Id.ToString(),
-                Text = r.RoomType + " - $" + r.PricePerNight + "/night (Room " + r.RoomNumber + ")"
-            }).ToList();
-
-            // Populate Drivers dropdown (optional - create if you have a Driver model)
-            // For now, we'll use a simple list
-            ViewBag.DriverId = new List<SelectListItem>
-            {
-                new SelectListItem { Value = "", Text = "-- No Driver Required --" },
-                new SelectListItem { Value = "1", Text = "John Driver" },
-                new SelectListItem { Value = "2", Text = "Jane Driver" }
-            };
-
-            return View();
+                Console.WriteLine($"ERROR in Create GET: {ex.Message}");
+                Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+                ViewBag.Error = "Failed to load booking form: " + ex.Message;
+                return View();
+            }
         }
 
         // POST: /Bookings/Create - Handle booking submission
@@ -152,12 +196,71 @@ namespace HotelManagementSystem.Controllers
                 .ToListAsync();
             ViewBag.RoomId = rooms;
 
-            ViewBag.DriverId = new List<SelectListItem>
+            var drivers = await _context.Drivers.ToListAsync();
+            var driverList = new List<SelectListItem>
             {
-                new SelectListItem { Value = "", Text = "-- No Driver Required --" },
-                new SelectListItem { Value = "1", Text = "John Driver" },
-                new SelectListItem { Value = "2", Text = "Jane Driver" }
+                new SelectListItem { Value = "", Text = "-- No Driver Required --" }
             };
+            driverList.AddRange(drivers.Select(d => new SelectListItem
+            {
+                Value = d.Id.ToString(),
+                Text = d.Name
+            }));
+            ViewBag.DriverId = driverList;
+        }
+
+        // Helper method to seed sample customers
+        private async Task SeedSampleCustomers()
+        {
+            var sampleCustomers = new List<Customer>
+            {
+                new Customer
+                {
+                    Name = "John Doe",
+                    Email = "john.doe@example.com",
+                    Phone = "1234567890"
+                },
+                new Customer
+                {
+                    Name = "Jane Smith",
+                    Email = "jane.smith@example.com",
+                    Phone = "0987654321"
+                },
+                new Customer
+                {
+                    Name = "Mike Johnson",
+                    Email = "mike.j@example.com",
+                    Phone = "5555555555"
+                }
+            };
+
+            _context.Customers.AddRange(sampleCustomers);
+            await _context.SaveChangesAsync();
+            Console.WriteLine("✓ Sample customers added to database");
+        }
+
+        // Helper method to seed sample drivers
+        private async Task SeedSampleDrivers()
+        {
+            var sampleDrivers = new List<Driver>
+            {
+                new Driver
+                {
+                    Name = "John Driver",
+                    Phone = "1112223333",
+                    LicenseNumber = "DL123456"
+                },
+                new Driver
+                {
+                    Name = "Jane Driver",
+                    Phone = "4445556666",
+                    LicenseNumber = "DL789012"
+                }
+            };
+
+            _context.Drivers.AddRange(sampleDrivers);
+            await _context.SaveChangesAsync();
+            Console.WriteLine("✓ Sample drivers added to database");
         }
 
         // Helper method to seed sample rooms
@@ -170,24 +273,21 @@ namespace HotelManagementSystem.Controllers
                     RoomNumber = "101",
                     RoomType = "Standard",
                     PricePerNight = 100.00m,
-                    Status = "Available",
-                    Description = "Comfortable standard room with basic amenities"
+                    Status = "Available"
                 },
                 new Room
                 {
                     RoomNumber = "201",
                     RoomType = "Deluxe",
                     PricePerNight = 150.00m,
-                    Status = "Available",
-                    Description = "Spacious deluxe room with premium amenities"
+                    Status = "Available"
                 },
                 new Room
                 {
                     RoomNumber = "301",
                     RoomType = "Suite",
                     PricePerNight = 250.00m,
-                    Status = "Available",
-                    Description = "Luxurious suite with separate living area"
+                    Status = "Available"
                 }
             };
 
