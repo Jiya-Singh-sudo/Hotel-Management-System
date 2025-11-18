@@ -1,5 +1,6 @@
-using HotelManagementSystem.Models;
+// using HotelManagementSystem.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 
 namespace HotelManagementSystem.Data
 {
@@ -10,12 +11,7 @@ namespace HotelManagementSystem.Data
         {
         }
 
-        // DbSets — map tables to models
-        public DbSet<Customer> Customers { get; set; } = null!;
-        public DbSet<Room> Rooms { get; set; } = null!;
-        public DbSet<Booking> Bookings { get; set; } = null!;
-        public DbSet<Driver> Drivers { get; set; } = null!;
-        public DbSet<Car> Cars { get; set; } = null!;
+
         
     }
 }

@@ -9,6 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Register | Staywise</title>
   <link rel="stylesheet" href="/css/styles.css" />
+
   <style>
     * {
       box-sizing: border-box;
@@ -133,31 +134,45 @@
       {
           <p style="color:red; font-size:0.9rem;">@ViewBag.Error</p>
       }
+      
+      <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
       <form asp-controller="Account" asp-action="Register" method="post">
+        
         <div class="form-group">
           <label for="fullname">Full Name</label>
-          <input type="text" id="fullname" name="FullName" placeholder="Enter your name" required />
+          <input type="text" id="fullname" name="Name" placeholder="Enter your name" required />
+          <span asp-validation-for="Name" class="text-danger"></span>
         </div>
 
         <div class="form-group">
           <label for="email">Email Address</label>
           <input type="email" id="email" name="Email" placeholder="Enter your email" required />
+          <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+        
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input type="tel" id="phone" name="PhoneNumber" placeholder="Enter your phone number" required />
+          <span asp-validation-for="PhoneNumber" class="text-danger"></span>
         </div>
 
         <div class="form-group">
           <label for="password">Password</label>
           <input type="password" id="password" name="Password" placeholder="Create a password" required />
+          <span asp-validation-for="Password" class="text-danger"></span>
         </div>
 
         <div class="form-group">
           <label for="confirm">Confirm Password</label>
           <input type="password" id="confirm" name="ConfirmPassword" placeholder="Re-enter password" required />
+          <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
         </div>
 
         <button type="submit" class="register-btn">Register</button>
       </form>
 
+      
       <p class="alt-text">
         Already have an account?
         <a asp-controller="Account" asp-action="Login">Login</a>
