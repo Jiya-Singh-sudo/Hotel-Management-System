@@ -1,16 +1,25 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace HotelManagementSystem.Models
 {
     public class Booking
     {
         public int Id { get; set; }
         
-        public int? CustomerId { get; set; }
-        public int? RoomId { get; set; }
+        [Required]
+        public int CustomerId { get; set; }
+        [Required]
+        public int RoomId { get; set; }
+        
         public int? DriverId { get; set; }
         
+        [Required]
         public DateTime CheckInDate { get; set; }
+        [Required]
         public DateTime CheckOutDate { get; set; }
+        [Required]
         public int NumberOfGuests { get; set; }
+        [Required]
         public decimal TotalAmount { get; set; }
         
         public string Status { get; set; } = "Pending"; // Pending, Confirmed, Cancelled

@@ -16,7 +16,7 @@ namespace HotelManagementSystem.Controllers
             _context = context;
         }
 
-        // GET: /Bookings/Index - Show all bookings
+        // GET: /Bookings/Index - Show all bookings (Include statements are correctly here)
         [HttpGet]
         [Route("")]
         [Route("Index")]
@@ -31,15 +31,12 @@ namespace HotelManagementSystem.Controllers
             return View(bookings);
         }
 
-        // GET: /Bookings/Create - Show booking form with dropdown data
+        // GET: /Bookings/Create - Show booking form
         [HttpGet]
         [Route("Create")]
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
             Console.WriteLine("=== CREATE BOOKING PAGE CALLED ===");
-
-            await PopulateDropdowns();
-
             return View();
         }
 
@@ -50,28 +47,60 @@ namespace HotelManagementSystem.Controllers
         public async Task<IActionResult> Create(Booking model)
         {
             Console.WriteLine("=== CREATE BOOKING SUBMISSION ===");
-            Console.WriteLine($"Customer ID: {model.CustomerId}, Room ID: {model.RoomId}");
 
             if (!ModelState.IsValid)
             {
-                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
-                {
-                    Console.WriteLine($"Validation Error: {error.ErrorMessage}");
-                }
-
-                // Repopulate dropdowns
-                await PopulateDropdowns();
                 ViewBag.Error = "Please fill all required fields correctly.";
                 return View(model);
             }
 
-            // Validate dates
+            // --- CRITICAL VALIDATION LOGIC ---
+
+            // 1. Validate Check-out Date
             if (model.CheckOutDate <= model.CheckInDate)
             {
-                await PopulateDropdowns();
                 ViewBag.Error = "Check-out date must be after check-in date.";
                 return View(model);
             }
+            
+            // 2. Validate Customer ID existence
+            var customerExists = await _context.Customers.AnyAsync(c => c.Id == model.CustomerId);
+            if (!customerExists)
+            {
+                ModelState.AddModelError("CustomerId", "Customer ID not found.");
+                ViewBag.Error = "The provided Customer ID is invalid.";
+                return View(model);
+            }
+
+            // 3. Validate Room ID existence and availability (optional extra check)
+            var room = await _context.Rooms.FirstOrDefaultAsync(r => r.Id == model.RoomId);
+            if (room == null)
+            {
+                ModelState.AddModelError("RoomId", "Room ID not found.");
+                ViewBag.Error = "The provided Room ID is invalid.";
+                return View(model);
+            }
+            // Optional Business Logic Check:
+            if (room.Status != "Available") 
+            {
+                ModelState.AddModelError("RoomId", $"Room {room.RoomNumber} is currently {room.Status}.");
+                ViewBag.Error = $"Room {room.RoomNumber} is currently unavailable.";
+                return View(model);
+            }
+
+            // 4. Validate Driver ID existence (only if provided)
+            if (model.DriverId.HasValue)
+            {
+                var driverExists = await _context.Drivers.AnyAsync(d => d.Id == model.DriverId.Value);
+                if (!driverExists)
+                {
+                    ModelState.AddModelError("DriverId", "Driver ID not found.");
+                    ViewBag.Error = "The provided Driver ID is invalid.";
+                    return View(model);
+                }
+            }
+            
+            // --- END VALIDATION LOGIC ---
 
             try
             {
@@ -88,9 +117,8 @@ namespace HotelManagementSystem.Controllers
             }
             catch (Exception ex)
             {
+                // Note: Generic error handling is still the fallback for unexpected issues
                 Console.WriteLine($"✗ Error: {ex.Message}");
-                Console.WriteLine($"✗ Stack Trace: {ex.StackTrace}");
-                await PopulateDropdowns();
                 ViewBag.Error = $"Failed to create booking: {ex.Message}";
                 return View(model);
             }
@@ -114,51 +142,8 @@ namespace HotelManagementSystem.Controllers
 
             return View(booking);
         }
-
-        // Helper method to populate dropdowns
-        private async Task PopulateDropdowns()
-        {
-            Console.WriteLine("=== POPULATING DROPDOWNS ===");
-
-            // ✅ FIX 1: Fetch customers from database
-            var customers = await _context.Customers.ToListAsync();
-            Console.WriteLine($"Found {customers.Count} customers");
-            
-            ViewBag.CustomerId = customers.Select(c => new SelectListItem
-            {
-                Value = c.Id.ToString(),
-                Text = $"{c.Name} ({c.Email})"
-            }).ToList();
-
-            // ✅ FIX 2: Fetch rooms from database
-            var rooms = await _context.Rooms.ToListAsync();
-            Console.WriteLine($"Found {rooms.Count} rooms");
-            
-            ViewBag.RoomId = rooms.Select(r => new SelectListItem
-            {
-                Value = r.Id.ToString(),
-                Text = $"{r.RoomType} - ${r.PricePerNight}/night (Room {r.RoomNumber})"
-            }).ToList();
-
-            // ✅ FIX 3: Fetch drivers from database
-            var drivers = await _context.Drivers.ToListAsync();
-            Console.WriteLine($"Found {drivers.Count} drivers");
-            
-            var driverList = new List<SelectListItem>
-            {
-                new SelectListItem { Value = "", Text = "-- No Driver Required --" }
-            };
-            
-            driverList.AddRange(drivers.Select(d => new SelectListItem
-            {
-                Value = d.Id.ToString(),
-                Text = $"{d.Name} - {d.Phone} {(d.IsAvailable ? "(Available)" : "(Unavailable)")}"
-            }));
-            
-            ViewBag.DriverId = driverList;
-
-            // Debug output
-            Console.WriteLine("Dropdowns populated successfully");
-        }
+        
+        // Helper method is now obsolete and removed for cleanliness
+        // private async Task PopulateDropdowns() {}
     }
 }
