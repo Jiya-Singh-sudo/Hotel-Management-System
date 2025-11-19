@@ -248,15 +248,14 @@
                 <div class="form-row">
                     <div>
                         <label asp-for="CustomerId">Customer Name</label>
-                        <select asp-for="CustomerId" class="form-control" asp-items="ViewBag.CustomerId" required>
-                            <option value="">-- Select Customer --</option>
-                        </select>
+                        <input type="text" asp-for="CustomerId" class="form-control" placeholder="Enter Customer ID" required />
                         <span asp-validation-for="CustomerId" class="text-danger"></span>
                     </div>
                     <div>
                         <label asp-for="DriverId">Driver</label>
                         <select asp-for="DriverId" class="form-control" asp-items="ViewBag.DriverId">
                              <option value="">-- No Driver Required --</option>
+                             <option value="">-- Driver Required --</option>
                         </select>
                         <span asp-validation-for="DriverId" class="text-danger"></span>
                     </div>
@@ -290,7 +289,10 @@
                     <div>
                         <label asp-for="RoomId">Room Type</label>
                         <select asp-for="RoomId" class="form-control" asp-items="ViewBag.RoomId" id="roomType" required>
-                            <option value="">Select</option>
+                            <option value="101">101</option>
+                            <option value="102">102</option>
+                            <option value="103">103</option>
+                            <option value="104">104</option>
                         </select>
                         <span asp-validation-for="RoomId" class="text-danger"></span>
                     </div>
