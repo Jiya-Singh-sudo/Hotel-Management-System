@@ -247,16 +247,14 @@
 
                 <div class="form-row">
                     <div>
-                        <label asp-for="CustomerId">Customer Name</label>
+                        <label asp-for="CustomerId">Customer ID</label>
                         <input type="text" asp-for="CustomerId" class="form-control" placeholder="Enter Customer ID" required />
                         <span asp-validation-for="CustomerId" class="text-danger"></span>
                     </div>
+                    
                     <div>
-                        <label asp-for="DriverId">Driver</label>
-                        <select asp-for="DriverId" class="form-control" asp-items="ViewBag.DriverId">
-                             <option value="">-- No Driver Required --</option>
-                             <option value="">-- Driver Required --</option>
-                        </select>
+                        <label asp-for="DriverId">Driver ID (Optional)</label>
+                        <input type="number" asp-for="DriverId" class="form-control" placeholder="Enter Driver ID (if needed)" />
                         <span asp-validation-for="DriverId" class="text-danger"></span>
                     </div>
                 </div>
@@ -287,13 +285,8 @@
                         <span asp-validation-for="NumberOfGuests" class="text-danger"></span>
                     </div>
                     <div>
-                        <label asp-for="RoomId">Room Type</label>
-                        <select asp-for="RoomId" class="form-control" asp-items="ViewBag.RoomId" id="roomType" required>
-                            <option value="101">101</option>
-                            <option value="102">102</option>
-                            <option value="103">103</option>
-                            <option value="104">104</option>
-                        </select>
+                        <label asp-for="RoomId">Room ID</label>
+                        <input type="number" asp-for="RoomId" class="form-control" placeholder="Enter Room ID" required />
                         <span asp-validation-for="RoomId" class="text-danger"></span>
                     </div>
                 </div>
@@ -305,16 +298,18 @@
                 <div class="id-row">
                     <div style="flex:1">
                         <label>ID Type (Client-side only)</label>
-                        <select>
+                        <select id="idTypeSelect">
                             <option value="">Select</option>
                             <option>Aadhaar</option>
                             <option>Passport</option>
                             <option>Driver’s License</option>
                         </select>
+                        <span id="idTypeError" class="upload-error">Please select an ID type.</span>
                     </div>
                     <div style="flex:1">
                         <label>Upload ID Proof (Client-side only)</label>
-                        <input type="file" accept="image/*,application/pdf" />
+                        <input type="file" accept="image/*,application/pdf" id="idProofUpload" />
+                        <span id="idProofError" class="upload-error">ID proof file is required.</span>
                     </div>
                 </div>
 
@@ -324,26 +319,12 @@
     </div>
     
     <script>
-        const confirmBtn = document.getElementById("confirmBookingBtn");
-        const roomType = document.getElementById("roomType");
-        const bookingImage = document.querySelector(".booking-image");
-        
-        if (roomType) {
-            roomType.addEventListener("change", (e) => {
-                const typeId = e.target.value;
-                
-                // Change background based on room selection
-                if (typeId === "1") {
-                    bookingImage.style.backgroundImage = "url('/images/IMG_6462.JPG')";
-                } else if (typeId === "2") {
-                    bookingImage.style.backgroundImage = "url('/images/IMG_6460.JPG')";
-                } else if (typeId === "3") {
-                    bookingImage.style.backgroundImage = "url('/images/IMG_6453.PNG')";
-                } else {
-                    bookingImage.style.backgroundImage = "url('/images/101.png')";
-                }
-            });
-        }
+        // References to form elements
+        const bookingForm = document.getElementById("bookingForm");
+        const idProofUpload = document.getElementById("idProofUpload");
+        const idTypeSelect = document.getElementById("idTypeSelect");
+        const idProofError = document.getElementById("idProofError");
+        const idTypeError = document.getElementById("idTypeError");
         
         // Simple client-side date validation
         const checkInDate = document.querySelector('input[name="CheckInDate"]');
@@ -357,6 +338,35 @@
                 }
             });
         }
+        
+        // FEATURE: Check if ID information is uploaded/selected
+        bookingForm.addEventListener("submit", function(e) {
+            let isValid = true;
+
+            // 1. Check if an ID proof file is selected
+            if (!idProofUpload || idProofUpload.files.length === 0) {
+                idProofError.style.display = 'block';
+                isValid = false;
+            } else {
+                idProofError.style.display = 'none';
+            }
+
+            // 2. Check if an ID type is selected
+            if (!idTypeSelect || idTypeSelect.value === "") {
+                idTypeError.style.display = 'block';
+                isValid = false;
+            } else {
+                idTypeError.style.display = 'none';
+            }
+
+            // If validation fails, prevent submission
+            if (!isValid) {
+                e.preventDefault();
+                // Optionally scroll to the error area
+                document.getElementById('id-row')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+        
     </script>
 </body>
 </html>

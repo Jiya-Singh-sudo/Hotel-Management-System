@@ -7,7 +7,7 @@ namespace HotelManagementSystem.Models
         public int Id { get; set; }
         
         [Required]
-        public int CustomerId { get; set; }
+        public string CustomerName { get; set; } = string.Empty;
         [Required]
         public int RoomId { get; set; }
         

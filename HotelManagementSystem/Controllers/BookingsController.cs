@@ -64,7 +64,7 @@ namespace HotelManagementSystem.Controllers
             }
             
             // 2. Validate Customer ID existence
-            var customerExists = await _context.Customers.AnyAsync(c => c.Id == model.CustomerId);
+            var customerExists = await _context.Customers.AnyAsync(c => c.Id == model.CustomerName);
             if (!customerExists)
             {
                 ModelState.AddModelError("CustomerId", "Customer ID not found.");
