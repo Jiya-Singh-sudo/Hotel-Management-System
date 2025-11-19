@@ -1,0 +1,163 @@
+@using HotelManagementSystem.Models
+@model Booking
+
+@{
+    // Uses a standalone view format, consistent with Create.cshtml
+    Layout = null; 
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Booking Confirmed | Staywise</title>
+    
+    <link rel="stylesheet" href="/css/styles.css" />
+    
+    <style>
+        :root {
+            --bg: #f8f5f0;
+            --accent: #d4b899;
+            --accent-dark: #8b6b52;
+            --text: #3e3e3e;
+            --card: #ffffff;
+            --shadow: rgba(0, 0, 0, 0.08);
+            --bg-color: #F8F5F0;
+            --text-color: #3E3E3E;
+            --accent-color: #D4B899;
+            --accent-vlight: #CDC4B5;
+            --accent-light: #E8D5BE;
+            --border-color: #A8A6A1;
+            --card-bg: #FFFFFF;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: "Poppins", sans-serif;
+            background: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .success-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px var(--shadow-color);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .success-container h2 {
+            font-family: "Glyce";
+            font-size: 2.2rem;
+            color: #28a745; /* Success Green */
+            margin-bottom: 0.5rem;
+        }
+
+        .success-container h3 {
+            font-size: 1.5rem;
+            color: var(--accent-dark);
+            margin-bottom: 20px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--accent-light);
+            font-size: 1rem;
+        }
+
+        .detail-row strong {
+            color: var(--text-color);
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 30px;
+            background: var(--accent-dark);
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: var(--accent-color);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="success-container">
+        <h2>Booking Confirmed!</h2>
+        <h3>Your reservation details are below:</h3>
+
+        <div class="detail-row">
+            <strong>Confirmation ID:</strong>
+            <span>@Model.Id</span>
+        </div>
+        
+        <div class="detail-row">
+            <strong>Customer ID:</strong>
+            <span>@Model.CustomerId</span>
+        </div>
+
+        <div class="detail-row">
+            <strong>Customer Name:</strong>
+            <span>@(Model.Customer?.Name ?? "N/A")</span>
+        </div>
+
+        <div class="detail-row">
+            <strong>Room ID:</strong>
+            <span>@Model.RoomId</span>
+        </div>
+
+        <div class="detail-row">
+            <strong>Room Details:</strong>
+            <span>@(Model.Room?.RoomNumber ?? "N/A") (@(Model.Room?.RoomType ?? "N/A"))</span>
+        </div>
+
+        <div class="detail-row">
+            <strong>Check-In Date:</strong>
+            <span>@Model.CheckInDate.ToShortDateString()</span>
+        </div>
+
+        <div class="detail-row">
+            <strong>Check-Out Date:</strong>
+            <span>@Model.CheckOutDate.ToShortDateString()</span>
+        </div>
+        
+        <div class="detail-row">
+            <strong>Total Guests:</strong>
+            <span>@Model.NumberOfGuests</span>
+        </div>
+
+        <div class="detail-row">
+            <strong>Total Amount:</strong>
+            <span>$@Model.TotalAmount.ToString("F2")</span>
+        </div>
+        
+        @if (Model.DriverId.HasValue)
+        {
+            <div class="detail-row">
+                <strong>Driver ID:</strong>
+                <span>@Model.DriverId</span>
+            </div>
+        }
+
+        <a asp-controller="Bookings" asp-action="Index" class="back-btn">View All Bookings</a>
+        <a asp-controller="Home" asp-action="Index" class="back-btn" style="margin-left: 10px; background-color: var(--accent-color);">Go to Home</a>
+    </div>
+
+</body>
+</html>
