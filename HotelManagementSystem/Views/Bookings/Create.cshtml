@@ -223,17 +223,17 @@
 <body>
     <nav>
         <div class="logo">
-            <a asp-page="/Index" class="logo-text">staywise.</a>
-        </div>
-        <ul class="nav-links">
-            <li><a asp-page="/Index">Home</a></li>
-            <li><a asp-controller="Rooms" asp-action="Index">Rooms</a></li>
-            <li><a asp-controller="Bookings" asp-action="Create" style="color: var(--accent-dark)">Booking</a></li>
-            <li><a asp-page="/Contact">Contact</a></li>
-        </ul>
-        <button class="login-btn">
-            <a asp-controller="Account" asp-action="Login" style="text-decoration: none; color: #fff;">Login</a>
-        </button>
+        <a asp-controller="Home" asp-action="Index" class="logo-text">staywise.</a>
+    </div>
+    <ul class="nav-links">
+        <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+        <li><a asp-controller="Rooms" asp-action="Index">Rooms</a></li>
+        <li><a asp-controller="Bookings" asp-action="Create" style="color: var(--accent-dark)">Booking</a></li>
+        <li><a asp-controller="Home" asp-action="Contact">Contact</a></li>
+    </ul>
+    <button class="login-btn">
+        <a asp-controller="Account" asp-action="Login" style="text-decoration: none; color: #fff;">Login</a>
+    </button>
     </nav>
 
     <div class="booking-container">
@@ -326,23 +326,35 @@
         const roomType = document.getElementById("roomType");
         const bookingImage = document.querySelector(".booking-image");
         
-        // This JS logic only works when the page is loaded (GET request)
-        roomType.addEventListener("change", (e) => {
-            // Note: The value here is the RoomId, not the descriptive text (deluxe, etc.)
-            // You may need to map these IDs to image URLs if you want this feature to work.
-            const typeId = e.target.value;
-            
-            // Assuming your RoomIds 1, 2, and 3 correspond to these types
-            if (typeId === "1") bookingImage.style.backgroundImage = "url('/images/IMG_6462.JPG')";
-            else if (typeId === "2") bookingImage.style.backgroundImage = "url('/images/IMG_6460.JPG')";
-            else if (typeId === "3") bookingImage.style.backgroundImage = "url('/images/IMG_6453.PNG')";
-            else bookingImage.style.backgroundImage = "url('/images/101.png')"; // default
-        });
-
-        // The OTP logic is removed as it doesn't align with the server-side MVC form submission flow.
-
-        // Add client-side validation scripts if not using a layout page
-        <partial name="_ValidationScriptsPartial" />
+        if (roomType) {
+            roomType.addEventListener("change", (e) => {
+                const typeId = e.target.value;
+                
+                // Change background based on room selection
+                if (typeId === "1") {
+                    bookingImage.style.backgroundImage = "url('/images/IMG_6462.JPG')";
+                } else if (typeId === "2") {
+                    bookingImage.style.backgroundImage = "url('/images/IMG_6460.JPG')";
+                } else if (typeId === "3") {
+                    bookingImage.style.backgroundImage = "url('/images/IMG_6453.PNG')";
+                } else {
+                    bookingImage.style.backgroundImage = "url('/images/101.png')";
+                }
+            });
+        }
+        
+        // Simple client-side date validation
+        const checkInDate = document.querySelector('input[name="CheckInDate"]');
+        const checkOutDate = document.querySelector('input[name="CheckOutDate"]');
+        
+        if (checkOutDate && checkInDate) {
+            checkOutDate.addEventListener('change', function() {
+                if (this.value && checkInDate.value && this.value <= checkInDate.value) {
+                    alert('Check-out date must be after check-in date');
+                    this.value = '';
+                }
+            });
+        }
     </script>
 </body>
 </html>

@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HotelManagementSystem.Data;
 using HotelManagementSystem.Models;
-using System.Security.Claims;
-
 
 namespace HotelManagementSystem.Controllers
 {
@@ -18,6 +16,21 @@ namespace HotelManagementSystem.Controllers
             _context = context;
         }
 
+        // GET: /Bookings/Index - Show all bookings
+        [HttpGet]
+        [Route("")]
+        [Route("Index")]
+        public async Task<IActionResult> Index()
+        {
+            var bookings = await _context.Bookings
+                .Include(b => b.Customer)
+                .Include(b => b.Room)
+                .Include(b => b.Driver)
+                .ToListAsync();
+
+            return View(bookings);
+        }
+
         // GET: /Bookings/Create - Show booking form with dropdown data
         [HttpGet]
         [Route("Create")]
@@ -25,84 +38,9 @@ namespace HotelManagementSystem.Controllers
         {
             Console.WriteLine("=== CREATE BOOKING PAGE CALLED ===");
 
-            try
-            {
-                // Populate Customers dropdown
-                var customers = await _context.Customers
-                    .Select(c => new SelectListItem
-                    {
-                        Value = c.Id.ToString(),
-                        Text = c.Name + " (" + c.Email + ")"
-                    })
-                    .ToListAsync();
-                
-                Console.WriteLine($"Found {customers.Count} customers");
-                
-                // If no customers, create sample data
-                if (!customers.Any())
-                {
-                    await SeedSampleCustomers();
-                    customers = await _context.Customers
-                        .Select(c => new SelectListItem
-                        {
-                            Value = c.Id.ToString(),
-                            Text = c.Name + " (" + c.Email + ")"
-                        })
-                        .ToListAsync();
-                }
-                
-                ViewBag.CustomerId = customers;
+            await PopulateDropdowns();
 
-                // Populate Rooms dropdown (create sample rooms if none exist)
-                var rooms = await _context.Rooms.ToListAsync();
-                Console.WriteLine($"Found {rooms.Count} rooms");
-                
-                if (!rooms.Any())
-                {
-                    // Add sample rooms if database is empty
-                    await SeedSampleRooms();
-                    rooms = await _context.Rooms.ToListAsync();
-                }
-
-                ViewBag.RoomId = rooms.Select(r => new SelectListItem
-                {
-                    Value = r.Id.ToString(),
-                    Text = r.RoomType + " - $" + r.PricePerNight + "/night (Room " + r.RoomNumber + ")"
-                }).ToList();
-
-                // Populate Drivers dropdown
-                var drivers = await _context.Drivers.ToListAsync();
-                Console.WriteLine($"Found {drivers.Count} drivers");
-                
-                if (!drivers.Any())
-                {
-                    await SeedSampleDrivers();
-                    drivers = await _context.Drivers.ToListAsync();
-                }
-
-                var driverList = new List<SelectListItem>
-                {
-                    new SelectListItem { Value = "", Text = "-- No Driver Required --" }
-                };
-                
-                driverList.AddRange(drivers.Select(d => new SelectListItem
-                {
-                    Value = d.Id.ToString(),
-                    Text = d.Name
-                }));
-
-                ViewBag.DriverId = driverList;
-
-                Console.WriteLine("=== DROPDOWNS POPULATED SUCCESSFULLY ===");
-                return View();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"ERROR in Create GET: {ex.Message}");
-                Console.WriteLine($"Stack Trace: {ex.StackTrace}");
-                ViewBag.Error = "Failed to load booking form: " + ex.Message;
-                return View();
-            }
+            return View();
         }
 
         // POST: /Bookings/Create - Handle booking submission
@@ -151,8 +89,9 @@ namespace HotelManagementSystem.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine($"✗ Error: {ex.Message}");
+                Console.WriteLine($"✗ Stack Trace: {ex.StackTrace}");
                 await PopulateDropdowns();
-                ViewBag.Error = "Failed to create booking. Please try again.";
+                ViewBag.Error = $"Failed to create booking: {ex.Message}";
                 return View(model);
             }
         }
@@ -165,6 +104,7 @@ namespace HotelManagementSystem.Controllers
             var booking = await _context.Bookings
                 .Include(b => b.Customer)
                 .Include(b => b.Room)
+                .Include(b => b.Driver)
                 .FirstOrDefaultAsync(b => b.Id == id);
 
             if (booking == null)
@@ -178,122 +118,47 @@ namespace HotelManagementSystem.Controllers
         // Helper method to populate dropdowns
         private async Task PopulateDropdowns()
         {
-            var customers = await _context.Customers
-                .Select(c => new SelectListItem
-                {
-                    Value = c.Id.ToString(),
-                    Text = c.Name + " (" + c.Email + ")"
-                })
-                .ToListAsync();
-            ViewBag.CustomerId = customers;
+            Console.WriteLine("=== POPULATING DROPDOWNS ===");
 
-            var rooms = await _context.Rooms
-                .Select(r => new SelectListItem
-                {
-                    Value = r.Id.ToString(),
-                    Text = r.RoomType + " - $" + r.PricePerNight + "/night (Room " + r.RoomNumber + ")"
-                })
-                .ToListAsync();
-            ViewBag.RoomId = rooms;
+            // ✅ FIX 1: Fetch customers from database
+            var customers = await _context.Customers.ToListAsync();
+            Console.WriteLine($"Found {customers.Count} customers");
+            
+            ViewBag.CustomerId = customers.Select(c => new SelectListItem
+            {
+                Value = c.Id.ToString(),
+                Text = $"{c.Name} ({c.Email})"
+            }).ToList();
 
+            // ✅ FIX 2: Fetch rooms from database
+            var rooms = await _context.Rooms.ToListAsync();
+            Console.WriteLine($"Found {rooms.Count} rooms");
+            
+            ViewBag.RoomId = rooms.Select(r => new SelectListItem
+            {
+                Value = r.Id.ToString(),
+                Text = $"{r.RoomType} - ${r.PricePerNight}/night (Room {r.RoomNumber})"
+            }).ToList();
+
+            // ✅ FIX 3: Fetch drivers from database
             var drivers = await _context.Drivers.ToListAsync();
+            Console.WriteLine($"Found {drivers.Count} drivers");
+            
             var driverList = new List<SelectListItem>
             {
                 new SelectListItem { Value = "", Text = "-- No Driver Required --" }
             };
+            
             driverList.AddRange(drivers.Select(d => new SelectListItem
             {
                 Value = d.Id.ToString(),
-                Text = d.Name
+                Text = $"{d.Name} - {d.Phone} {(d.IsAvailable ? "(Available)" : "(Unavailable)")}"
             }));
+            
             ViewBag.DriverId = driverList;
-        }
 
-        // Helper method to seed sample customers
-        private async Task SeedSampleCustomers()
-        {
-            var sampleCustomers = new List<Customer>
-            {
-                new Customer
-                {
-                    Name = "John Doe",
-                    Email = "john.doe@example.com",
-                    Phone = "1234567890"
-                },
-                new Customer
-                {
-                    Name = "Jane Smith",
-                    Email = "jane.smith@example.com",
-                    Phone = "0987654321"
-                },
-                new Customer
-                {
-                    Name = "Mike Johnson",
-                    Email = "mike.j@example.com",
-                    Phone = "5555555555"
-                }
-            };
-
-            _context.Customers.AddRange(sampleCustomers);
-            await _context.SaveChangesAsync();
-            Console.WriteLine("✓ Sample customers added to database");
-        }
-
-        // Helper method to seed sample drivers
-        private async Task SeedSampleDrivers()
-        {
-            var sampleDrivers = new List<Driver>
-            {
-                new Driver
-                {
-                    Name = "John Driver",
-                    Phone = "1112223333",
-                    LicenseNumber = "DL123456"
-                },
-                new Driver
-                {
-                    Name = "Jane Driver",
-                    Phone = "4445556666",
-                    LicenseNumber = "DL789012"
-                }
-            };
-
-            _context.Drivers.AddRange(sampleDrivers);
-            await _context.SaveChangesAsync();
-            Console.WriteLine("✓ Sample drivers added to database");
-        }
-
-        // Helper method to seed sample rooms
-        private async Task SeedSampleRooms()
-        {
-            var sampleRooms = new List<Room>
-            {
-                new Room
-                {
-                    RoomNumber = "101",
-                    RoomType = "Standard",
-                    PricePerNight = 100.00m,
-                    Status = "Available"
-                },
-                new Room
-                {
-                    RoomNumber = "201",
-                    RoomType = "Deluxe",
-                    PricePerNight = 150.00m,
-                    Status = "Available"
-                },
-                new Room
-                {
-                    RoomNumber = "301",
-                    RoomType = "Suite",
-                    PricePerNight = 250.00m,
-                    Status = "Available"
-                }
-            };
-
-            _context.Rooms.AddRange(sampleRooms);
-            await _context.SaveChangesAsync();
-            Console.WriteLine("✓ Sample rooms added to database");
+            // Debug output
+            Console.WriteLine("Dropdowns populated successfully");
         }
     }
 }
