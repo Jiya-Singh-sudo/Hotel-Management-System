@@ -42,9 +42,9 @@
             background: var(--bg-color);
             font-family: "Poppins", sans-serif;
             height: 100vh;
-            overflow: hidden; /* ✅ no scroll */
             display: flex;
             flex-direction: column;
+            overflow-y: auto;  
         }
 
         /* --- NAVBAR --- */
@@ -102,8 +102,8 @@
         .booking-container {
             display: flex;
             flex: 1;
-            height: 100vh; 
-            overflow: hidden;
+            height: auto; 
+            overflow: auto; 
             margin-top: 0;
         }
 
@@ -121,6 +121,8 @@
             justify-content: center;
             padding: 3rem 3rem;
             background: #ffffffd8;
+            max-height: 100vh; 
+            overflow-y: auto;
         }
 
         .booking-form h2 {
@@ -240,6 +242,15 @@
 
         <div class="booking-form">
             <h2>Book Your Stay</h2>
+            @if (ViewBag.Error != null)
+            {
+                <p style="color:red; font-weight:600; text-align: center; margin-bottom: 1rem;">@ViewBag.Error</p>
+            }
+            
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div asp-validation-summary="All" class="text-danger" style="text-align: center;"></div>
+            }
 
             <form asp-controller="Bookings" asp-action="Create" method="post" id="bookingForm">
                 @Html.AntiForgeryToken()
