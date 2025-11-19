@@ -1,14 +1,16 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace HotelManagementSystem.Models
 {
-    public class Booking
+    // View Model for the Booking Create form, handling string inputs
+    public class BookingCreateViewModel
     {
-        public int Id { get; set; }
-        
-        [Required]
-        public int CustomerId { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Customer Name is required.")]
+        [Display(Name = "Customer Name")]
+        public required string CustomerName { get; set; } // Input for customer name
+
+        [Required(ErrorMessage = "Room ID is required.")]
         public int RoomId { get; set; }
         
         public int? DriverId { get; set; }
@@ -22,12 +24,6 @@ namespace HotelManagementSystem.Models
         [Required]
         public decimal TotalAmount { get; set; }
         
-        public string Status { get; set; } = "Pending"; // Pending, Confirmed, Cancelled
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-        // Navigation properties
-        public Customer? Customer { get; set; }
-        public Room? Room { get; set; }
-        public Driver? Driver { get; set; }
+        // Note: Booking entity properties like Status and CreatedAt are handled by the controller
     }
 }

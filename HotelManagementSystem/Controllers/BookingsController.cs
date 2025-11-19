@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HotelManagementSystem.Data;
 using HotelManagementSystem.Models;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace HotelManagementSystem.Controllers
 {
@@ -16,7 +18,7 @@ namespace HotelManagementSystem.Controllers
             _context = context;
         }
 
-        // GET: /Bookings/Index - Show all bookings (Include statements are correctly here)
+        // GET: /Bookings/Index - Show all bookings (with Eager Loading)
         [HttpGet]
         [Route("")]
         [Route("Index")]
@@ -31,20 +33,25 @@ namespace HotelManagementSystem.Controllers
             return View(bookings);
         }
 
-        // GET: /Bookings/Create - Show booking form
+        // GET: /Bookings/Create - Show booking form (Passes the ViewModel)
         [HttpGet]
         [Route("Create")]
         public IActionResult Create()
         {
             Console.WriteLine("=== CREATE BOOKING PAGE CALLED ===");
-            return View();
+            
+            // FIX for CS9035: Initialize the ViewModel's required string properties
+            return View(new BookingCreateViewModel 
+            {
+                CustomerName = string.Empty
+            }); 
         }
 
         // POST: /Bookings/Create - Handle booking submission
         [HttpPost]
         [Route("Create")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Booking model)
+        public async Task<IActionResult> Create(BookingCreateViewModel model) 
         {
             Console.WriteLine("=== CREATE BOOKING SUBMISSION ===");
 
@@ -63,16 +70,18 @@ namespace HotelManagementSystem.Controllers
                 return View(model);
             }
             
-            // 2. Validate Customer ID existence
-            var customerExists = await _context.Customers.AnyAsync(c => c.Id == model.CustomerName);
-            if (!customerExists)
+            // 2. Validate Customer Name existence and retrieve ID
+            var customer = await _context.Customers
+                .FirstOrDefaultAsync(c => c.Name == model.CustomerName);
+                
+            if (customer == null)
             {
-                ModelState.AddModelError("CustomerId", "Customer ID not found.");
-                ViewBag.Error = "The provided Customer ID is invalid.";
+                ModelState.AddModelError("CustomerName", "Customer name not found. Please ensure the name is registered.");
+                ViewBag.Error = "The provided Customer Name is invalid.";
                 return View(model);
             }
-
-            // 3. Validate Room ID existence and availability (optional extra check)
+            
+            // 3. Validate Room ID existence and availability
             var room = await _context.Rooms.FirstOrDefaultAsync(r => r.Id == model.RoomId);
             if (room == null)
             {
@@ -80,7 +89,6 @@ namespace HotelManagementSystem.Controllers
                 ViewBag.Error = "The provided Room ID is invalid.";
                 return View(model);
             }
-            // Optional Business Logic Check:
             if (room.Status != "Available") 
             {
                 ModelState.AddModelError("RoomId", $"Room {room.RoomNumber} is currently {room.Status}.");
@@ -104,20 +112,29 @@ namespace HotelManagementSystem.Controllers
 
             try
             {
-                // Set default values
-                model.Status = "Pending";
-                model.CreatedAt = DateTime.UtcNow;
-
-                _context.Bookings.Add(model);
+                // FIX: Construct the final Booking entity using the found Customer ID
+                var bookingEntity = new Booking
+                {
+                    CustomerId = customer.Id, // Assign the found Customer ID (resolves CS0117)
+                    RoomId = model.RoomId,
+                    DriverId = model.DriverId,
+                    CheckInDate = model.CheckInDate,
+                    CheckOutDate = model.CheckOutDate,
+                    NumberOfGuests = model.NumberOfGuests,
+                    TotalAmount = model.TotalAmount,
+                    Status = "Pending",
+                    CreatedAt = DateTime.UtcNow
+                };
+                
+                _context.Bookings.Add(bookingEntity);
                 await _context.SaveChangesAsync();
 
-                Console.WriteLine($"✓ Booking saved with ID: {model.Id}");
+                Console.WriteLine($"✓ Booking saved with ID: {bookingEntity.Id}");
 
-                return RedirectToAction("Success", new { id = model.Id });
+                return RedirectToAction("Success", new { id = bookingEntity.Id });
             }
             catch (Exception ex)
             {
-                // Note: Generic error handling is still the fallback for unexpected issues
                 Console.WriteLine($"✗ Error: {ex.Message}");
                 ViewBag.Error = $"Failed to create booking: {ex.Message}";
                 return View(model);
@@ -142,8 +159,5 @@ namespace HotelManagementSystem.Controllers
 
             return View(booking);
         }
-        
-        // Helper method is now obsolete and removed for cleanliness
-        // private async Task PopulateDropdowns() {}
     }
 }
