@@ -1,11 +1,11 @@
 using HotelManagementSystem.Data;
 using HotelManagementSystem.Models;
-// using HotelManagementSystem.ViewModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using BCrypt.Net;
 
 namespace HotelManagementSystem.Controllers
 {
@@ -40,7 +40,7 @@ namespace HotelManagementSystem.Controllers
             // Log received data for debugging
             Console.WriteLine($"Registration attempt - Name: {model.Name}, Email: {model.Email}");
 
-            // Check if model state is valid
+            // FIX: Check if model state is INVALID (not valid!)
             if (!ModelState.IsValid)
             {
                 // Log validation errors
@@ -63,15 +63,17 @@ namespace HotelManagementSystem.Controllers
                     return View(model);
                 }
 
+                // Hash the password securely
+                string hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
+
                 // Create new customer
-                // WARNING: Password should be hashed in production using BCrypt or Argon2
                 var newUser = new Customer
                 {
                     Name = model.Name,
                     Email = model.Email,
                     Username = model.Email, // Use Email as Username
                     Phone = model.PhoneNumber,
-                    PasswordHash = model.Password, // TODO: Hash password in production!
+                    PasswordHash = hashedPassword, // Store hashed password
                     IsAdmin = false, // Default new user to Customer role
                     Bookings = new List<Booking>()
                 };
@@ -122,6 +124,7 @@ namespace HotelManagementSystem.Controllers
             // Log login attempt
             Console.WriteLine($"Login attempt - Username: {model.Email}");
 
+            // FIX: Check if model state is INVALID (not valid!)
             if (!ModelState.IsValid)
             {
                 foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
@@ -133,15 +136,16 @@ namespace HotelManagementSystem.Controllers
 
             try
             {
-                // Find the user by username
+                // Find the user by username (using Email as Username)
                 var user = await _context.Customers
                     .FirstOrDefaultAsync(c => c.Username == model.Email);
 
-                // Validate Credentials
-                // WARNING: THIS IS INSECURE. In production, use proper password hashing
-                if (user != null && user.PasswordHash == model.Password)
+                // Verify password using BCrypt
+                bool passwordVerified = (user != null && BCrypt.Net.BCrypt.Verify(model.Password, user.PasswordHash));
+
+                if (passwordVerified)
                 {
-                    Console.WriteLine($"Login successful for user: {user.Username}");
+                    Console.WriteLine($"Login successful for user: {user!.Username}");
 
                     // Create Claims Identity
                     var claims = new List<Claim>
@@ -167,9 +171,17 @@ namespace HotelManagementSystem.Controllers
                         new ClaimsPrincipal(claimsIdentity),
                         authProperties);
 
-                    // Redirect all users to Home page after successful login
-                    Console.WriteLine($"Redirecting user {user.Username} to Home page");
-                    return RedirectToAction("Index", "Home");
+                    // Redirect based on role
+                    if (user.IsAdmin)
+                    {
+                        Console.WriteLine($"Redirecting admin {user.Username} to Dashboard");
+                        return RedirectToAction("Dashboard", "Customers");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Redirecting user {user.Username} to Home page");
+                        return RedirectToAction("Index", "Home");
+                    }
                 }
 
                 // Invalid credentials
