@@ -19,7 +19,7 @@ namespace HotelManagementSystem.Controllers
         // GET: /Customers/Dashboard
         public async Task<IActionResult> Dashboard()
         {
-            var today = DateTime.Today;
+            var today = DateTime.UtcNow.Date;
 
             // 1. Fetch Statistics
             var viewModel = new AdminDashboardViewModel
