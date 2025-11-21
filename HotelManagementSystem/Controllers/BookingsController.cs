@@ -41,9 +41,15 @@ namespace HotelManagementSystem.Controllers
         }
 
         // GET: Bookings/Create
-        public IActionResult Create()
+        public IActionResult Create(int? roomId)
         {
-            return View();
+            var viewModel = new BookingCreateViewModel();
+            if (roomId.HasValue)
+            {
+                viewModel.RoomId = roomId.Value;
+            }
+            
+            return View(viewModel);
         }
 
         // POST: Bookings/Create

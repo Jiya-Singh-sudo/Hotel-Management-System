@@ -1,328 +1,202 @@
+@model IEnumerable<HotelManagementSystem.Models.Room>
+
 @{
     ViewData["Title"] = "Rooms | Staywise";
+    Layout = null;
 }
-<style>
-    :root {
-      --bg: #f8f5f0;
-      --accent: #d4b899;
-      --accent-dark: #8b6b52;
-      --text: #3e3e3e;
-      --card: #ffffff;
-      --shadow: rgba(0, 0, 0, 0.08);
-      --bg-color: #F8F5F0;
-      --text-color: #3E3E3E;
-      --accent-color: #D4B899;
-      --accent-vlight: #CDC4B5;
-      --accent-light: #E8D5BE;
-      --border-color: #A8A6A1;
-      --card-bg: #FFFFFF;
-      --shadow-color: rgba(0, 0, 0, 0.08);
-    }
 
-    body {
-      background-color: var(--bg-color);
-      margin: 0;
-      font-family: 'Poppins', sans-serif;
-    }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <style>
+        :root {
+            --bg: #f8f5f0;
+            --accent: #d4b899;
+            --accent-dark: #8b6b52;
+            --text: #3e3e3e;
+            --card: #ffffff;
+            --shadow: rgba(0, 0, 0, 0.08);
+            --bg-color: #F8F5F0;
+            --text-color: #3E3E3E;
+            --accent-color: #D4B899;
+            --accent-vlight: #CDC4B5;
+            --accent-light: #E8D5BE;
+            --border-color: #A8A6A1;
+            --card-bg: #FFFFFF;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+        }
 
-    nav {
-      padding: 0.8rem 3rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      background: var(--bg-color);
-      z-index: 100;
-      box-sizing: border-box;
-    }
+        body { background-color: var(--bg-color); margin: 0; font-family: 'Poppins', sans-serif; }
 
-    .logo-text {
-      color: var(--accent-dark);
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 1.3rem;
-    }
+        nav {
+            padding: 0.8rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            background: var(--bg-color);
+            z-index: 100;
+            box-sizing: border-box;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
 
-    .nav-links {
-      display: flex;
-      list-style-type: none;
-      gap: 2rem;
-    }
+        .logo-text { color: var(--accent-dark); text-decoration: none; font-weight: 600; font-size: 1.3rem; font-family: 'Glyce', serif; }
+        
+        .nav-links { display: flex; list-style-type: none; gap: 2rem; }
+        .nav-links a { text-decoration: none; color: var(--text-color); transition: color 0.3s; font-weight: 500; }
+        .nav-links a:hover { color: var(--accent-dark); }
 
-    .nav-links a {
-      text-decoration: none;
-      color: var(--text-color);
-      transition: color 0.3s;
-    }
+        .login-btn { background: var(--accent-dark); color: #fff; border: none; padding: 0.6rem 1.4rem; cursor: pointer; transition: 0.3s; border-radius: 4px; }
+        .login-btn:hover { background: var(--accent-color); color: var(--text-color); }
+        .login-btn a { text-decoration: none; color: inherit; }
 
-    .nav-links a:hover {
-      color: var(--accent-dark);
-    }
+        .rooms-section { padding: 8rem 8% 4rem; text-align: center; }
+        .rooms-section h1 { font-family: 'Glyce', serif; color: var(--accent-dark); font-size: 3rem; margin-bottom: 3rem; }
+        
+        .rooms-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2.5rem; }
 
-    .login-btn {
-      background: var(--accent-dark);
-      color: #fff;
-      border: none;
-      padding: 0.6rem 1.4rem;
-      cursor: pointer;
-      transition: 0.3s;
-    }
+        .room-card { 
+            text-align: left; 
+            transition: transform 0.3s ease, box-shadow 0.3s ease; 
+            overflow: hidden; 
+            background: white; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 15px var(--shadow-color);
+            display: flex;
+            flex-direction: column;
+        }
+        .room-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+        
+        .room-card img { width: 100%; height: 240px; object-fit: cover; }
+        
+        .room-card-content { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; }
+        .room-card-content h3 { font-family: 'Glyce', serif; color: var(--accent-dark); margin-top: 0; font-size: 1.4rem; }
+        .room-card-content p { font-family: 'Poppins', sans-serif; font-size: 0.95rem; color: var(--text-color); line-height: 1.6; margin-bottom: 1.2rem; flex: 1; }
 
-    .login-btn:hover {
-      background: var(--accent-color);
-      color: var(--text-color);
-    }
+        .status-badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.8rem; }
+        .status-available { background-color: #e6f4ea; color: #1e7e34; }
+        .status-occupied { background-color: #fce8e6; color: #c53030; }
 
-    .rooms-section {
-      padding: 6rem 8% 4rem;
-      text-align: center;
-    }
+        .btn-group { display: flex; gap: 10px; margin-top: auto; }
+        
+        .view-btn, .book-btn {
+            flex: 1;
+            padding: 0.7rem;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            transition: 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
 
-    .rooms-section h1 {
-      font-family: 'Glyce', serif;
-      color: var(--accent-dark);
-      font-size: 3rem;
-      margin-bottom: 3rem;
-    }
+        .view-btn { background: transparent; border: 1px solid var(--accent-dark); color: var(--accent-dark); }
+        .view-btn:hover { background: #fcf9f5; }
 
-    .rooms-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-    }
+        .book-btn { background: var(--accent-dark); color: #fff; border: 1px solid var(--accent-dark); }
+        .book-btn:hover { background: var(--accent-color); border-color: var(--accent-color); color: var(--text-color); }
 
-    .room-card {
-      text-align: left;
-      transition: transform 0.3s ease;
-      overflow: hidden;
-    }
+        /* Modal */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; animation: fadeIn 0.3s ease; backdrop-filter: blur(2px); }
+        @@keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
+        .modal-content { background: #fff; width: 700px; max-width: 90%; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2); animation: scaleIn 0.3s ease; }
+        @@keyframes scaleIn { from {transform: scale(0.95);} to {transform: scale(1);} }
+        .modal-header { position: relative; }
+        .modal-header img { width: 100%; height: 300px; object-fit: cover; }
+        .close-btn { position: absolute; top: 15px; right: 15px; font-size: 1.5rem; color: #fff; cursor: pointer; background: rgba(0,0,0,0.4); width: 36px; height: 36px; border-radius: 50%; display: flex; justify-content: center; align-items: center; transition: 0.3s; }
+        .close-btn:hover { background: rgba(0,0,0,0.7); }
+        .modal-body { padding: 2rem; }
+        .modal-body h3 { font-family: 'Glyce', serif; color: var(--accent-dark); margin-bottom: 0.5rem; font-size: 1.8rem; }
+        .modal-body p { font-family: 'Poppins', sans-serif; font-size: 1rem; margin-bottom: 1.5rem; color: var(--text-color); line-height: 1.6; }
+        
+        .modal-actions { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem; border-top: 1px solid #eee; padding-top: 1.5rem; }
+    </style>
+</head>
+<body>
 
-    .room-card:hover {
-      transform: translateY(-5px);
-    }
+    <nav>
+        <div class="logo">
+            <a asp-controller="Home" asp-action="Index" class="logo-text">staywise.</a>
+        </div>
+        <ul class="nav-links">
+            <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li><a asp-controller="Rooms" asp-action="Index" style="color: var(--accent-dark)">Rooms</a></li>
+            <li><a asp-controller="Bookings" asp-action="Create">Booking</a></li>
+            <li><a asp-controller="Contact" asp-action="Index">Contact</a></li>
+        </ul>
+        <button class="login-btn">
+            <a asp-controller="Account" asp-action="Login">Login</a>
+        </button>
+    </nav>
 
-    .room-card img {
-      width: 100%;
-      height: 220px;
-      object-fit: cover;
-    }
+    <main class="rooms-section">
+        <h1>Our Rooms</h1>
+        <div class="rooms-grid">
+            @foreach (var room in Model)
+            {
+                // Dynamic Image Logic (placeholder based on ID)
+                string imagePath = room.Id % 3 == 0 ? "/images/IMG_6453.PNG" : (room.Id % 2 == 0 ? "/images/IMG_6460.JPG" : "/images/IMG_6462.JPG");
+                
+                <div class="room-card">
+                    <img src="@imagePath" alt="@room.RoomType" />
+                    <div class="room-card-content">
+                        <div style="display:flex; justify-content:space-between; align-items:start;">
+                            <h3>@room.RoomType</h3>
+                            <span class="status-badge @(room.Status == "Available" ? "status-available" : "status-occupied")">
+                                @room.Status
+                            </span>
+                        </div>
+                        <p>Room @room.RoomNumber <br/> A perfect choice for your stay. Includes high-speed Wi-Fi and breakfast.</p>
+                        <p style="font-weight:600; color: var(--accent-dark); margin-top:0;">$@room.PricePerNight <span style="font-size:0.8em; font-weight:400; color:#777;">/ night</span></p>
 
-    .room-card-content {
-      padding: 0rem;
-    }
-
-    .room-card-content h3 {
-      font-family: 'Glyce', serif;
-      color: var(--accent-dark);
-    }
-
-    .room-card-content p {
-      font-family: 'Poppins', sans-serif;
-      font-size: 0.95rem;
-      color: var(--text-color);
-      line-height: 1.5;
-      margin-bottom: 1.2rem;
-    }
-
-    .view-btn {
-      background: var(--accent-dark);
-      color: #fff;
-      border: none;
-      padding: 0.6rem 1.4rem;
-      cursor: pointer;
-      font-family: 'Poppins', sans-serif;
-      transition: 0.3s ease;
-    }
-
-    .view-btn:hover {
-      background: var(--accent-color);
-      color: var(--text-color);
-    }
-
-    /* Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.4);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      animation: fadeIn 0.3s ease;
-    }
-
-    @@keyframes fadeIn {
-      from {opacity: 0;}
-      to {opacity: 1;}
-    }
-
-    .modal-content {
-      background: #fff;
-      width: 700px;
-      max-width: 90%;
-      overflow: hidden;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-      animation: scaleIn 0.3s ease;
-    }
-
-    @@keyframes scaleIn {
-      from {transform: scale(0.9);}
-      to {transform: scale(1);}
-    }
-
-    .modal-header {
-      position: relative;
-    }
-
-    .modal-header img {
-      width: 100%;
-      height: 250px;
-      object-fit: cover;
-    }
-
-    .close-btn {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      font-size: 1.5rem;
-      color: #fff;
-      cursor: pointer;
-      background: rgba(0,0,0,0.3);
-      width: 30px;
-      height: 30px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transition: 0.3s;
-    }
-
-    .close-btn:hover {
-      background: rgba(0,0,0,0.6);
-    }
-
-    .modal-body {
-      padding: 1.5rem 2rem;
-    }
-
-    .modal-body h3 {
-      font-family: 'Glyce', serif;
-      color: var(--accent-dark);
-      margin-bottom: 0.5rem;
-    }
-
-    .modal-body p {
-      font-family: 'Poppins', sans-serif;
-      font-size: 0.95rem;
-      margin-bottom: 1rem;
-      color: var(--text-color);
-    }
-
-    .gallery {
-      display: flex;
-      gap: 0.6rem;
-      flex-wrap: wrap;
-    }
-
-    .gallery img {
-      width: 100px;
-      height: 80px;
-      object-fit: cover;
-      cursor: pointer;
-      transition: transform 0.3s, opacity 0.3s;
-      opacity: 0.9;
-    }
-
-    .gallery img:hover {
-      transform: scale(1.05);
-      opacity: 1;
-    }
-
-    @@media (max-width: 600px) {
-      .modal-body {
-        padding: 1rem;
-      }
-    }
-  </style>
-<main class="rooms-section">
-    <h1>Our Rooms</h1>
-    <div class="rooms-grid">
-        <!-- Deluxe Room -->
-        <div class="room-card">
-            <img src="~/images/IMG_6462.JPG" alt="Deluxe Room" />
-            <div class="room-card-content">
-                <h3>Deluxe Room</h3>
-                <p>A cozy blend of luxury and warmth with elegant interiors and calm tones.</p>
-                <button class="view-btn"
-                        data-room="Deluxe Room"
-                        data-img="~/images/IMG_6462.JPG"
-                        data-gallery="~/images/IMG_6462.JPG,~/images/room1.png,~/images/room11.png"
-                        data-desc="A cozy blend of luxury and warmth with elegant interiors and calm tones.">
-                    View
-                </button>
-            </div>
+                        <div class="btn-group">
+                            <button class="view-btn"
+                                    data-room="@room.RoomType (@room.RoomNumber)"
+                                    data-img="@imagePath"
+                                    data-desc="Experience luxury in Room @room.RoomNumber. Price: $@room.PricePerNight per night."
+                                    data-id="@room.Id">
+                                View Details
+                            </button>
+                            
+                            <a asp-controller="Bookings" asp-action="Create" asp-route-roomId="@room.Id" class="book-btn">Book Now</a>
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
 
-        <!-- Executive Suite -->
-        <div class="room-card">
-            <img src="~/images/IMG_6460.JPG" alt="Executive Suite" />
-            <div class="room-card-content">
-                <h3>Executive Suite</h3>
-                <p>Spacious comfort, premium bedding, and modern design for refined stays.</p>
-                <button class="view-btn"
-                        data-room="Executive Suite"
-                        data-img="~/images/IMG_6460.JPG"
-                        data-gallery="~/images/IMG_6460.JPG,~/images/IMG_6461.JPG"
-                        data-desc="Spacious comfort, premium bedding, and modern design for refined stays.">
-                    View
-                </button>
+        <div class="modal" id="roomModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <img id="modalMainImage" src="" alt="Room Image" />
+                    <span class="close-btn">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <h3 id="modalRoomTitle"></h3>
+                    <p id="modalRoomDesc"></p>
+                    
+                    <div class="modal-actions">
+                        <a id="modalBookBtn" href="#" class="book-btn" style="padding: 0.8rem 2rem; display:inline-block;">Book This Room</a>
+                    </div>
+                </div>
             </div>
         </div>
+    </main>
 
-        <!-- Family Suite -->
-        <div class="room-card">
-            <img src="~/images/IMG_6453.PNG" alt="Family Suite" />
-            <div class="room-card-content">
-                <h3>Family Suite</h3>
-                <p>Perfect for families — generous space and homely touches for everyone to unwind.</p>
-                <button class="view-btn"
-                        data-room="Family Suite"
-                        data-img="~/images/room3.png"
-                        data-gallery="~/images/IMG_6453.PNG,~/images/room33.png"
-                        data-desc="Perfect for families — generous space and homely touches for everyone to unwind.">
-                    View
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Room Info Modal -->
-    <div class="modal" id="roomModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <img id="modalMainImage" src="" alt="Room Image" />
-                <span class="close-btn">&times;</span>
-            </div>
-            <div class="modal-body">
-                <h3 id="modalRoomTitle"></h3>
-                <p id="modalRoomDesc"></p>
-                <div class="gallery" id="modalGallery"></div>
-            </div>
-        </div>
-    </div>
-</main>
-
-@section Scripts {
     <script>
         const modal = document.getElementById("roomModal");
         const closeBtn = modal.querySelector(".close-btn");
         const modalMainImage = document.getElementById("modalMainImage");
         const modalRoomTitle = document.getElementById("modalRoomTitle");
         const modalRoomDesc = document.getElementById("modalRoomDesc");
-        const modalGallery = document.getElementById("modalGallery");
-
+        const modalBookBtn = document.getElementById("modalBookBtn");
         const viewButtons = document.querySelectorAll(".view-btn");
 
         viewButtons.forEach(btn => {
@@ -331,21 +205,17 @@
                 modalMainImage.src = btn.dataset.img;
                 modalRoomTitle.textContent = btn.dataset.room;
                 modalRoomDesc.textContent = btn.dataset.desc;
-
-                modalGallery.innerHTML = "";
-                const images = btn.dataset.gallery.split(",");
-                images.forEach(imgSrc => {
-                    const img = document.createElement("img");
-                    img.src = imgSrc.trim();
-                    img.addEventListener("click", () => modalMainImage.src = imgSrc.trim());
-                    modalGallery.appendChild(img);
-                });
+                
+                // Update the "Book This Room" button link dynamically
+                const roomId = btn.dataset.id;
+                modalBookBtn.href = `/Bookings/Create?roomId=${roomId}`;
             });
         });
-
+        
         closeBtn.addEventListener("click", () => modal.style.display = "none");
         window.addEventListener("click", e => {
             if (e.target === modal) modal.style.display = "none";
         });
     </script>
-}
+</body>
+</html>
