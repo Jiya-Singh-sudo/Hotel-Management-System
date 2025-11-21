@@ -1,0 +1,43 @@
+@model HotelManagementSystem.Models.Booking
+
+@{
+    ViewData["Title"] = "Booking Details";
+}
+
+<div class="container" style="padding-top: 2rem;">
+    <h1>Booking Details</h1>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">Booking ID</dt>
+        <dd class="col-sm-9">@Model.Id</dd>
+
+        <dt class="col-sm-3">Customer</dt>
+        <dd class="col-sm-9">@(Model.Customer?.Name ?? "N/A")</dd>
+
+        <dt class="col-sm-3">Room</dt>
+        <dd class="col-sm-9">
+            @(Model.Room?.RoomNumber ?? "N/A") 
+            <small class="text-muted">(@(Model.Room?.RoomType ?? "Unknown Type"))</small>
+        </dd>
+
+        <dt class="col-sm-3">Check-In</dt>
+        <dd class="col-sm-9">@Model.CheckInDate.ToShortDateString()</dd>
+
+        <dt class="col-sm-3">Check-Out</dt>
+        <dd class="col-sm-9">@Model.CheckOutDate.ToShortDateString()</dd>
+
+        <dt class="col-sm-3">Guests</dt>
+        <dd class="col-sm-9">@Model.NumberOfGuests</dd>
+
+        <dt class="col-sm-3">Total Amount</dt>
+        <dd class="col-sm-9">$@Model.TotalAmount</dd>
+
+        <dt class="col-sm-3">Driver Assigned</dt>
+        <dd class="col-sm-9">@(Model.Driver?.Name ?? "None")</dd>
+    </dl>
+    
+    <div style="margin-top: 1rem;">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a> 
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>

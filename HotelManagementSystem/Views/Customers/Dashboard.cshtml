@@ -1,6 +1,8 @@
+@model HotelManagementSystem.Models.AdminDashboardViewModel
+
 @{
-    ViewData["Title"] = "Customer Dashboard";
-    var userName = User?.Identity?.IsAuthenticated ?? false ? User?.Identity?.Name ?? "Guest" : "Guest";
+    ViewData["Title"] = "Admin Dashboard";
+    var userName = User?.Identity?.Name ?? "Admin";
 }
 
 <!DOCTYPE html>
@@ -12,20 +14,9 @@
   <style>
     @@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
-    @@font-face {
-      font-family: 'Glyce';
-      src: url('~/fonts/Glyce-Regular.otf') format('opentype');
-    }
-
-    @@font-face {
-      font-family: 'neue-light';
-      src: url('~/fonts/NeueHaasDisplayLight.ttf') format('truetype');
-    }
-
-    @@font-face {
-      font-family: 'neue-medium';
-      src: url('~/fonts/NeueHaasDisplayMediu.ttf') format('truetype');
-    }
+    @@font-face { font-family: 'Glyce'; src: url('/fonts/Glyce-Regular.otf') format('opentype'); }
+    @@font-face { font-family: 'neue-light'; src: url('/fonts/NeueHaasDisplayLight.ttf') format('truetype'); }
+    @@font-face { font-family: 'neue-medium'; src: url('/fonts/NeueHaasDisplayMediu.ttf') format('truetype'); }
 
     :root {
       --bg-color: #F8F5F0;
@@ -39,173 +30,69 @@
       --shadow-color: rgba(0, 0, 0, 0.08);
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: "neue-light", sans-serif;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: "neue-light", sans-serif; }
 
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      padding: 2rem 4rem;
-    }
+    body { background-color: var(--bg-color); color: var(--text-color); padding: 2rem 4rem; }
 
+    /* NAV (Same as before) */
     nav {
       padding: 0.8rem 3rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
+      top: 0; left: 0; width: 100%;
       background: var(--bg-color);
       box-shadow: 0 2px 4px var(--shadow-color);
       z-index: 100;
     }
+    .logo-text { color: var(--accent-dark); font-family: 'Glyce'; font-size: 1.4rem; text-decoration: none; }
+    .nav-links { display: flex; list-style-type: none; gap: 2rem; }
+    .nav-links a { color: var(--text-color); text-decoration: none; transition: 0.2s ease; }
+    .nav-links a:hover { color: var(--accent-dark); }
+    
+    .logout-btn { background-color: var(--accent-color); color: white; border: none; padding: 0.6rem 1.2rem; cursor: pointer; }
+    .logout-btn:hover { background-color: var(--accent-dark); }
 
-    .logo-text {
-      color: var(--accent-dark);
-      font-family: 'Glyce';
-      font-size: 1.4rem;
-    }
+    header { margin-top: 7%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+    header h1 { font-family: "Glyce", serif; font-size: 2rem; }
 
-    .nav-links {
-      display: flex;
-      list-style-type: none;
-      gap: 2rem;
-    }
+    /* CARDS */
+    .cards { display: flex; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 2rem; }
+    .card { background: var(--accent-dark); color: #fff; flex: 1 1 200px; padding: 1.5rem; text-align: center; box-shadow: 0 4px 8px var(--shadow-color); border-radius: 8px; }
+    .card h3 { font-family: "Glyce"; font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--accent-vlight); }
+    .card p { font-size: 1.5rem; font-weight: bold; }
 
-    .nav-links a {
-      color: var(--text-color);
-      text-decoration: none;
-      transition: 0.2s ease;
-    }
+    /* TABLE */
+    table { width: 100%; border-collapse: collapse; background: var(--card-bg); margin: 2rem 0; box-shadow: 0 4px 8px var(--shadow-color); border-radius: 8px; overflow: hidden; }
+    th, td { padding: 1rem; border-bottom: 1px solid #eee; text-align: left; }
+    th { background-color: var(--accent-color); color: var(--accent-dark); font-weight: 600; }
+    tr:hover { background-color: #fafafa; }
 
-    .nav-links a:hover {
-      color: var(--accent-dark);
-    }
+    /* GRID & BUTTONS */
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .notifications, .admin-actions { background: #fdf9f5; padding: 1.5rem; box-shadow: 0 4px 8px var(--shadow-color); border-radius: 8px; }
+    .notifications h3, .admin-actions h3 { font-family: "Glyce"; margin-bottom: 1rem; color: var(--accent-dark); }
+    .notification-item { padding: 0.5rem 0; border-bottom: 1px solid #eee; }
 
-    .logout-btn {
-      background-color: var(--accent-color);
-      color: white;
-      border: none;
-      padding: 0.6rem 1.2rem;
-      cursor: pointer;
-      transition: background 0.3s ease;
+    .action-btn {
+      display: inline-block; padding: 0.8rem 1.5rem; background: var(--accent-color); color: white;
+      border: none; font-weight: 500; cursor: pointer; transition: background 0.3s ease; text-decoration: none; margin-right: 10px;
+      border-radius: 4px;
     }
-
-    .logout-btn:hover {
-      background-color: var(--accent-dark);
-    }
-
-    header {
-      margin-top: 7%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 2rem;
-    }
-
-    header h1 {
-      font-family: "Glyce", serif;
-      font-size: 2rem;
-    }
-
-    .cards {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .card {
-      background: var(--accent-dark);
-      color: #fff;
-      flex: 1 1 250px;
-      padding: 1.5rem;
-      text-align: center;
-      box-shadow: 0 4px 8px var(--shadow-color);
-    }
-
-    .card h3 {
-      font-family: "Glyce";
-      font-size: 1.2rem;
-      margin-bottom: 0.5rem;
-      color: var(--accent-vlight);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: var(--card-bg);
-      margin: 2rem 0;
-      box-shadow: 0 4px 8px var(--shadow-color);
-    }
-
-    th, td {
-      padding: 1rem;
-      border-bottom: 1px solid #eee;
-      text-align: left;
-    }
-
-    th {
-      background-color: var(--accent-color);
-      color: var(--accent-dark);
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-    }
-
-    .notifications, .parking-info {
-      background: #fdf9f5;
-      padding: 1.5rem;
-      box-shadow: 0 4px 8px var(--shadow-color);
-    }
-
-    .notifications h3, .parking-info h3 {
-      font-family: "Glyce";
-      margin-bottom: 1rem;
-      color: var(--accent-dark);
-    }
-
-    .notification-item {
-      padding: 0.5rem 0;
-      border-bottom: 1px solid #eee;
-    }
-
-    .new-booking-btn {
-      display: inline-block;
-      padding: 0.8rem 2rem;
-      background: var(--accent-color);
-      color: white;
-      border: none;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    .new-booking-btn:hover {
-      background: var(--accent-dark);
-    }
+    .action-btn:hover { background: var(--accent-dark); }
   </style>
 </head>
 
 <body>
   <nav>
     <div class="logo">
-      <a href="~/Home/Index" class="logo-text">staywise.</a>
+      <a href="/Home/Index" class="logo-text">staywise.</a>
     </div>
     <ul class="nav-links">
-      <li><a href="~/Home/Index">Home</a></li>
-      <li><a href="~/Rooms/Index">Rooms</a></li>
-      <li><a href="~/Booking/Index">Booking</a></li>
-      <li><a href="~/Home/Contact">Contact</a></li>
+      <li><a href="/Home/Index">Home</a></li>
+      <li><a href="/Rooms/Index">Rooms</a></li>
+      <li><a href="/Bookings/Index">All Bookings</a></li>
     </ul>
     <form asp-controller="Account" asp-action="Logout" method="post" style="margin:0;">
       <button type="submit" class="logout-btn">Logout</button>
@@ -213,70 +100,80 @@
   </nav>
 
   <header>
-    <h1>Welcome back, <span style="color: var(--accent-dark); font-family: 'neue-medium';">@userName!</span></h1>
-    <div class="profile">
-      <a href="#">Edit Profile</a>
-    </div>
+    <h1>Admin Dashboard <span style="font-family: 'neue-light'; font-size:1rem; color: var(--text-color);">| Welcome, @userName</span></h1>
   </header>
 
   <section class="cards">
     <div class="card">
       <h3>Total Bookings</h3>
-      <p>8</p>
+      <p>@Model.TotalBookings</p>
     </div>
     <div class="card">
-      <h3>Active Stay</h3>
-      <p>Deluxe Suite (2 Nights)</p>
+      <h3>Occupied Rooms</h3>
+      <p>@Model.OccupiedRooms</p>
     </div>
     <div class="card">
-      <h3>Parking Token</h3>
-      <p>#P-204</p>
+      <h3>Total Revenue</h3>
+      <p>$@Model.TotalRevenue.ToString("N0")</p>
+    </div>
+    <div class="card" style="background-color: var(--accent-color);">
+      <h3>Total Customers</h3>
+      <p>@Model.TotalCustomers</p>
     </div>
   </section>
 
   <section>
-    <h2>Recent Bookings</h2>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2>Recent System Bookings</h2>
+        <a href="/Bookings/Index" style="color: var(--accent-dark); text-decoration:none;">View All &rarr;</a>
+    </div>
+    
     <table>
       <tr>
-        <th>Booking ID</th>
-        <th>Room Type</th>
+        <th>ID</th>
+        <th>Customer</th>
+        <th>Room</th>
         <th>Check-In</th>
         <th>Check-Out</th>
-        <th>Status</th>
+        <th>Total</th>
       </tr>
-      <tr>
-        <td>#1021</td>
-        <td>Executive Suite</td>
-        <td>2025-11-02</td>
-        <td>2025-11-05</td>
-        <td>Completed</td>
-      </tr>
-      <tr>
-        <td>#1028</td>
-        <td>Family Room</td>
-        <td>2025-12-12</td>
-        <td>2025-12-15</td>
-        <td>Upcoming</td>
-      </tr>
+      @if(Model.RecentBookings.Any())
+      {
+          foreach (var item in Model.RecentBookings)
+          {
+            <tr>
+                <td>#@item.Id</td>
+                <td>@(item.Customer?.Name ?? "N/A")</td>
+                <td>@(item.Room?.RoomNumber ?? "N/A")</td>
+                <td>@item.CheckInDate.ToShortDateString()</td>
+                <td>@item.CheckOutDate.ToShortDateString()</td>
+                <td>$@item.TotalAmount.ToString("F2")</td>
+            </tr>
+          }
+      }
+      else
+      {
+          <tr>
+              <td colspan="6" style="text-align:center; padding: 2rem;">No bookings found in the system.</td>
+          </tr>
+      }
     </table>
   </section>
 
   <div class="grid">
-    <section class="parking-info">
-      <h3>Parking / Driver Info</h3>
-      <p><b>Token No:</b> #P-204</p>
-      <p><b>Car No:</b> MH 04 AA 1234</p>
-      <p><b>Slot:</b> Basement 2 / A4</p>
-      <p><b>Status:</b> Active</p>
+    <section class="admin-actions">
+      <h3>Quick Actions</h3>
+      <a href="/Bookings/Create" class="action-btn">+ New Booking</a>
+      <a href="/Rooms/Index" class="action-btn">Manage Rooms</a>
     </section>
 
     <section class="notifications">
-      <h3>Notifications</h3>
-      <div class="notification-item">Your booking #1028 has been confirmed.</div>
-      <div class="notification-item">Reminder: Check-in tomorrow at 2 PM.</div>
+      <h3>System Notifications</h3>
+      <div class="notification-item">Database Connection: <strong>Active</strong></div>
+      <div class="notification-item">Date: @DateTime.Now.ToShortDateString()</div>
+      <div class="notification-item">Pending Check-ins today: @Model.OccupiedRooms</div>
     </section>
   </div>
 
-  <button class="new-booking-btn" onclick="window.location.href='@Url.Action("Create", "Booking")'">+ New Booking</button>
 </body>
 </html>

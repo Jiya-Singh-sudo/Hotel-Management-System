@@ -13,7 +13,8 @@
     <title>Book Your Stay | Staywise</title>
     
     <link rel="stylesheet" href="/css/styles.css" />
-    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
     <style>
         :root {
             --bg: #f8f5f0;
@@ -32,9 +33,7 @@
             --shadow-color: rgba(0, 0, 0, 0.08);
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             margin: 0;
@@ -44,7 +43,7 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow-y: auto;  
+            overflow-y: auto;
         }
 
         /* --- NAVBAR --- */
@@ -80,9 +79,7 @@
             transition: 0.3s;
         }
 
-        .nav-links a:hover {
-            color: var(--accent-dark);
-        }
+        .nav-links a:hover { color: var(--accent-dark); }
 
         .login-btn {
             background: var(--accent-dark);
@@ -109,7 +106,6 @@
 
         .booking-image {
             flex: 1.2;
-            /* 2. CORRECTED: Use absolute path for images from wwwroot */
             background: url("/images/101.png") center/cover no-repeat;
             filter: brightness(75%);
         }
@@ -139,8 +135,7 @@
             gap: 1rem;
         }
 
-        form input,
-        form select {
+        form input, form select {
             width: 100%;
             padding: 0.7rem;
             border: 1px solid #ccc;
@@ -153,30 +148,7 @@
             gap: 1rem;
         }
 
-        .form-row > div {
-            flex: 1;
-        }
-
-        .otp-row {
-            display: grid;
-            grid-template-columns: 1.2fr 0.8fr 0.9fr;
-            gap: 0.5rem;
-            align-items: end;
-        }
-
-        .otp-row button {
-            background: var(--accent-dark);
-            color: #fff;
-            border: none;
-            padding: 1rem;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .otp-row button:hover {
-            background: var(--accent-color);
-            color: var(--text-color);
-        }
+        .form-row > div { flex: 1; }
 
         .id-row {
             display: flex;
@@ -199,6 +171,13 @@
             background: var(--accent-color);
             color: var(--text-color);
         }
+        
+        .upload-error {
+            color: red;
+            font-size: 0.85rem;
+            display: none;
+            margin-top: 0.25rem;
+        }
 
         @@media (max-width: 900px) {
             .booking-container {
@@ -206,35 +185,26 @@
                 height: auto;
                 overflow-y: auto;
             }
-
-            body {
-                overflow-y: auto; /* enable scroll only for smaller screens */
-            }
-
-            .booking-image {
-                height: 40vh;
-            }
-
-            .booking-form {
-                padding: 2rem;
-            }
+            body { overflow-y: auto; }
+            .booking-image { height: 40vh; }
+            .booking-form { padding: 2rem; }
         }
     </style>
 </head>
 <body>
     <nav>
         <div class="logo">
-        <a asp-controller="Home" asp-action="Index" class="logo-text">staywise.</a>
-    </div>
-    <ul class="nav-links">
-        <li><a asp-controller="Home" asp-action="Index">Home</a></li>
-        <li><a asp-controller="Rooms" asp-action="Index">Rooms</a></li>
-        <li><a asp-controller="Bookings" asp-action="Create" style="color: var(--accent-dark)">Booking</a></li>
-        <li><a asp-controller="Home" asp-action="Contact">Contact</a></li>
-    </ul>
-    <button class="login-btn">
-        <a asp-controller="Account" asp-action="Login" style="text-decoration: none; color: #fff;">Login</a>
-    </button>
+            <a asp-controller="Home" asp-action="Index" class="logo-text">staywise.</a>
+        </div>
+        <ul class="nav-links">
+            <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li><a asp-controller="Rooms" asp-action="Index">Rooms</a></li>
+            <li><a asp-controller="Bookings" asp-action="Create" style="color: var(--accent-dark)">Booking</a></li>
+            <li><a asp-controller="Home" asp-action="Contact">Contact</a></li>
+        </ul>
+        <button class="login-btn">
+            <a asp-controller="Account" asp-action="Login" style="text-decoration: none; color: #fff;">Login</a>
+        </button>
     </nav>
 
     <div class="booking-container">
@@ -305,7 +275,7 @@
                 <input type="number" asp-for="TotalAmount" placeholder="Enter estimated total amount" required />
                 <span asp-validation-for="TotalAmount" class="text-danger"></span>
                 
-                <div class="id-row">
+                <div class="id-row" id="id-row">
                     <div style="flex:1">
                         <label>ID Type (Client-side only)</label>
                         <select id="idTypeSelect">
@@ -328,6 +298,8 @@
         </div>
     </div>
     
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
         // References to form elements
         const bookingForm = document.getElementById("bookingForm");
@@ -335,7 +307,7 @@
         const idTypeSelect = document.getElementById("idTypeSelect");
         const idProofError = document.getElementById("idProofError");
         const idTypeError = document.getElementById("idTypeError");
-        
+
         // Simple client-side date validation
         const checkInDate = document.querySelector('input[name="CheckInDate"]');
         const checkOutDate = document.querySelector('input[name="CheckOutDate"]');
@@ -349,7 +321,7 @@
             });
         }
         
-        // FEATURE: Check if ID information is uploaded/selected
+        // FEATURE: Check validation + SweetAlert Notification
         bookingForm.addEventListener("submit", function(e) {
             let isValid = true;
 
@@ -369,14 +341,28 @@
                 idTypeError.style.display = 'none';
             }
 
-            // If validation fails, prevent submission
+            // 3. Validation Check
             if (!isValid) {
                 e.preventDefault();
-                // Optionally scroll to the error area
                 document.getElementById('id-row')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+                // VALIDATION PASSED
+                e.preventDefault(); // Stop submission temporarily to show alert
+
+                Swal.fire({
+                    title: 'Booking Done Successfully!',
+                    text: 'Your reservation is being processed.',
+                    icon: 'success',
+                    confirmButtonColor: '#8b6b52',
+                    confirmButtonText: 'OK',
+                    timer: 3000,
+                    timerProgressBar: true
+                }).then((result) => {
+                    // Resume form submission after user clicks OK or timer expires
+                    bookingForm.submit();
+                });
             }
         });
-        
     </script>
 </body>
 </html>
