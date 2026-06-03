@@ -1,7 +1,3 @@
-Based on the provided codebase, here is a comprehensive `README.md` file tailored for your Hotel Management System project.
-
----
-
 # Hotel Management System
 
 A robust, web-based Hotel Management System built with **ASP.NET Core (MVC)** and **Entity Framework Core**, designed to streamline hotel operations including bookings, customer management, and room tracking.
